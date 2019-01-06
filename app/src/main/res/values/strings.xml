@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Tasks</string>
+
+    <string-array name="priority">
+        <item>HIGH</item>
+        <item>MED</item>
+        <item>SMALL</item>
+    </string-array>
+</resources>

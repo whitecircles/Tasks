@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ActivityForNoteBuild">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@drawable/yellow"
+        >
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1. enter a note here:"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop = "20dp"
+            android:layout_marginLeft = "40dp"/>
+
+        <EditText
+            android:id="@+id/editText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:text="test"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            android:layout_marginTop = "20dp"
+            android:layout_marginLeft = "60dp"
+            android:layout_marginRight="60dp"/>
+
+
+
+        <TextView
+            android:id="@+id/textViewForPriority"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2. set the priority:"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop = "20dp"
+            android:layout_marginLeft = "40dp"/>
+
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop = "20dp"
+            android:layout_marginLeft = "60dp"
+            android:layout_marginRight="60dp"/>
+
+
+
+        <Button
+            android:id="@+id/buttonForPhoto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="take a photo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop = "20dp"
+            android:layout_marginLeft = "40dp"/>
+
+        <TextView
+            android:id="@+id/textViewforPhotoTaken"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+
+            android:text="" />
+
+        <Button
+            android:id="@+id/buttonForDatePick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="notification Date"
+            android:layout_marginTop = "20dp"
+            android:layout_marginLeft = "40dp"/>
+
+        <FrameLayout
+            android:id="@+id/fragment_containerForDate"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content">
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/fragment_containerForTime"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content">
+
+        </FrameLayout>
+
+
+    </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/saveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="268dp"
+        android:layout_marginTop="468dp"
+        android:background="@color/colorPrimaryDark"
+        android:src="@drawable/ic_check_black_24dp"
+        app:backgroundTint="@color/colorPrimaryDark"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+
+
+
+</android.support.constraint.ConstraintLayout>
