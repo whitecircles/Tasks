@@ -35,14 +35,16 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
     public static final String EXTRA_REPLY_PRIORITY = "com.example.android.wordlistsql.REPLY_FOR_PRIORITY";
     public static final String EXTRA_REPLY_PHOTO = "com.example.android.wordlistsql.REPLY_FOR_PHOTO";
     static final int REQUEST_IMAGE_CAPTURE = 1;
+    public boolean isEdit = false;
 
 
-    private EditText mEditNoteView;
+    EditText mEditNoteView;
     Note.Priority item;
     Bitmap photo;
     TextView tvForPhoto;
     Date pendDate = new Date();
     Calendar calendar;
+    Note note;
 
 
     private Button btnForPendDate;
@@ -53,7 +55,16 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_for_note_build);
 
-        calendar = Calendar.getInstance();
+        mEditNoteView = (EditText) findViewById(R.id.editText);
+
+        Intent intent = getIntent();
+        if (intent.hasExtra("noteForEdit"))
+        {
+            note = (Note) intent.getExtras().getParcelable("noteForEdit");
+            isEdit = true;
+            mEditNoteView.setEnabled(false);
+
+        }
 
 
 
@@ -63,13 +74,24 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
         TextView tvForPhoto = findViewById(R.id.textViewforPhotoTaken);
         tvForPhoto.setText("");
 
-        mEditNoteView = (EditText) findViewById(R.id.editText);
+
 
         //---------spinner
 
         final Spinner spinner = (Spinner) findViewById(R.id.spinner);
 
         spinner.setAdapter(new ArrayAdapter<Note.Priority>(this, android.R.layout.simple_spinner_item, Note.Priority.values()));
+
+        if (note != null)
+        {
+            ArrayAdapter myAdap = (ArrayAdapter) spinner.getAdapter();
+            int spinnerPosition = myAdap.getPosition(note.getPriority());
+            spinner.setSelection(spinnerPosition);
+            mEditNoteView.setText(note.getNote());
+            photo = note.getPhoto();
+            pendDate = note.getPendingDate();
+
+        }
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent,
@@ -106,6 +128,8 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
 
                     replyIntent.putExtra("date", pendDate);
 
+                    replyIntent.putExtra("isEdit", isEdit);
+
                     setResult(RESULT_OK, replyIntent);
                 }
                 finish();
@@ -121,6 +145,8 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
                 DialogFragment timePicker = new TimeFragment();
                 timePicker.show(getSupportFragmentManager(),"time picker");
 
+
+                calendar = Calendar.getInstance();
                 pendDate = calendar.getTime();
 
             }
@@ -141,13 +167,14 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-
+            tvForPhoto = findViewById(R.id.textViewforPhotoTaken);
 
 
             if(imageBitmap != null)
             {
                 tvForPhoto.setText("Photo has been taken");
             }
+            photo = imageBitmap;
         }
     }
 

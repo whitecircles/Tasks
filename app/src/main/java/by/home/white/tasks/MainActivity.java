@@ -13,6 +13,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -27,6 +28,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -38,10 +40,12 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
 
+
 public class MainActivity extends AppCompatActivity {
 
     public static final int NEW_NOTE_ACTIVITY_REQUEST_CODE = 1;
     private static final String CHANNEL_ID = "101";
+    public boolean isEdit = false;
 
     private NoteViewModel mNoteViewModel;
 
@@ -115,6 +119,10 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == NEW_NOTE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
+            isEdit = data.getBooleanExtra("isEdit", false);
+
+
+
             SharedPreferences pref = getSharedPreferences("identifiers", MODE_PRIVATE);
             int id = pref.getInt("id", 0);
             SharedPreferences.Editor editor = pref.edit();
@@ -134,17 +142,27 @@ public class MainActivity extends AppCompatActivity {
                         R.drawable.nophoto);
                 btm = photo;
             }
+
             Note note = new Note(data.getStringExtra(ActivityForNoteBuild.EXTRA_REPLY), date, priority, btm, pendDate);
 
 
-            mNoteViewModel.insert(note);
+            if (isEdit)
+            {
+                mNoteViewModel.update(note);
+            }
+            else {
+                mNoteViewModel.insert(note);
+            }
+
 
             long timeInMilliseconds = note.getPendingDate().getTime();
             long timeInMillisecondsNow = (long) new Date().getTime();
             long timediff = timeInMilliseconds - timeInMillisecondsNow;
 
-            scheduleNotification(getNotification(note.getNote(), String.valueOf(id)), (int) timediff, id);
-            Log.d("timinmillis",String.valueOf(timediff));
+            if (timediff > 0) {
+                scheduleNotification(getNotification(note.getNote(), String.valueOf(id)), (int) timediff, id);
+                Log.d("timinmillis", String.valueOf(timediff));
+            }
 
 
 
@@ -173,6 +191,20 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.delete:
                         Note myNoteForDel = adapter.getNoteAtPosition(position);
                         mNoteViewModel.delete(myNoteForDel);
+                        return true;
+                    case R.id.edit:
+                        Note myNoteForEdit = adapter.getNoteAtPosition(position);
+                        Intent intent = new Intent(MainActivity.this, ActivityForNoteBuild.class);
+                        /*
+                        intent.putExtra("note", myNoteForEdit.getNote());
+                        intent.putExtra("photo", myNoteForEdit.getPhoto());
+                        intent.putExtra("pdate", myNoteForEdit.getPendingDate());
+                        intent.putExtra("date", myNoteForEdit.getDate());
+                        intent.putExtra("isChecked", myNoteForEdit.isChecked());
+                        intent.putExtra("priority", myNoteForEdit.getPriority());
+                        */
+                        intent.putExtra("noteForEdit", (Parcelable) myNoteForEdit);
+                        startActivityForResult(intent, NEW_NOTE_ACTIVITY_REQUEST_CODE);
                         return true;
                     default:
                         return false;

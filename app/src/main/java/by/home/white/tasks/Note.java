@@ -5,12 +5,16 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 import android.graphics.Bitmap;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import java.util.Date;
 
 @Entity(tableName = "note_table")
-public class Note {
+public class Note implements Parcelable {
+
+
 
 
 
@@ -59,6 +63,29 @@ public class Note {
         this.mPhoto = photo;
         this.mPendingDate = pendingDate;
     }
+
+    protected Note(Parcel in) {
+        mNote = in.readString();
+        mChecked = in.readByte() != 0;
+        mDate = (Date) in.readSerializable();
+        mPendingDate = (Date) in.readSerializable();
+        mPhoto = in.readParcelable(Bitmap.class.getClassLoader());
+        mPriority = Priority.values()[in.readInt()];
+
+
+    }
+
+    public static final Creator<Note> CREATOR = new Creator<Note>() {
+        @Override
+        public Note createFromParcel(Parcel in) {
+            return new Note(in);
+        }
+
+        @Override
+        public Note[] newArray(int size) {
+            return new Note[size];
+        }
+    };
 
     public Date getPendingDate() {
         return mPendingDate;
@@ -115,6 +142,22 @@ public class Note {
 
     public void setChecked(@NonNull boolean mChecked) {
         this.mChecked = mChecked;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
+        dest.writeString(mNote);
+        dest.writeInt(mChecked ? 1 : 0);
+        dest.writeSerializable(mDate);
+        dest.writeSerializable(mPendingDate);
+        dest.writeParcelable(mPhoto, flags);
+        dest.writeInt(mPriority.ordinal());
     }
 
     public enum Priority {
