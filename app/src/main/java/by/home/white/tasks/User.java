@@ -16,9 +16,9 @@ public class User {
     @Expose
     private String Name;
 
-    @SerializedName("Password")
+    @SerializedName("Passwrd")
     @Expose
-    private String Password;
+    private String Passwrd;
 
 
     public int getId() {
@@ -37,12 +37,12 @@ public class User {
         Name = name;
     }
 
-    public String getPassword() {
-        return Password;
+    public String getPasswrd() {
+        return Passwrd;
     }
 
-    public void setPassword(String password) {
-        Password = password;
+    public void setPasswrd(String password) {
+        Passwrd = password;
     }
 }
 

@@ -5,16 +5,11 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Parcelable;
 import android.os.SystemClock;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -26,11 +21,22 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import by.home.white.tasks.activities.ActivityForNoteBuild;
+import by.home.white.tasks.retrofit.NetworkService;
+import by.home.white.tasks.reclrView.ReclrAdapter;
+import by.home.white.tasks.reclrView.ReclrItemClickListener;
+import by.home.white.tasks.entities.Note;
+import by.home.white.tasks.room.NoteRoomDatabase;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class MainActivityInside extends AppCompatActivity {
@@ -39,7 +45,7 @@ public class MainActivityInside extends AppCompatActivity {
     private static final String CHANNEL_ID = "101";
     public boolean isEdit = false;
 
-    private NoteViewModel mNoteViewModel;
+    //private NoteViewModel mNoteViewModel;
 
     RecyclerView rv;
     ReclrAdapter adapter;
@@ -52,7 +58,7 @@ public class MainActivityInside extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_inside);
 
-        mNoteViewModel = ViewModelProviders.of(this).get(NoteViewModel.class);
+        /*mNoteViewModel = ViewModelProviders.of(this).get(NoteViewModel.class);
 
         mNoteViewModel.getAllNotes().observe(this, new Observer<List<Note>>() {
             @Override
@@ -65,7 +71,7 @@ public class MainActivityInside extends AppCompatActivity {
         });
 
         getAllAsyncTask task = new getAllAsyncTask();
-        task.execute();
+        task.execute(); */
 
 
         rv = findViewById(R.id.reclr);
@@ -77,7 +83,23 @@ public class MainActivityInside extends AppCompatActivity {
             public void onItemClick(View view, final int position) {
                 Note myNoteForIsDone = adapter.getNoteAtPosition(position);
                 myNoteForIsDone.setChecked(!myNoteForIsDone.isChecked());
-                mNoteViewModel.update(myNoteForIsDone);
+                //mNoteViewModel.update(myNoteForIsDone);
+                NetworkService.getInstance().getJSONApiEditNote().editNote(myNoteForIsDone.getId(),
+                        myNoteForIsDone.getNote(),myNoteForIsDone.isChecked(),myNoteForIsDone.getPriority().toString(),myNoteForIsDone.getDate().toString(),
+                        myNoteForIsDone.getPendingDate().toString(),myNoteForIsDone.getUserId())
+                        .enqueue(new Callback<Void>() {
+                            @Override
+                            public void onResponse(Call<Void> call, Response<Void> response) {
+                                Toast toast = Toast.makeText(getApplicationContext(),
+                                        "successful", Toast.LENGTH_SHORT);
+                                toast.show();
+                            }
+
+                            @Override
+                            public void onFailure(Call<Void> call, Throwable t) {
+                                Log.d("cause:", t.getMessage());
+                            }
+                        });
 
 
             }
@@ -94,6 +116,24 @@ public class MainActivityInside extends AppCompatActivity {
         rv.addItemDecoration(dividerItemDecoration);
 
         rv.setAdapter(adapter);
+
+        NetworkService.getInstance().getJSONApiGetNotes().getNotes(getIntent().getIntExtra("user",1))
+                .enqueue(new Callback<List<Note>>() {
+                    @Override
+                    public void onResponse(Call<List<Note>> call, Response<List<Note>> response) {
+
+                        nts = response.body();
+                        adapter.setNotes(nts);
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<Note>> call, Throwable t) {
+
+                        Log.d("Cause", t.getMessage());
+                    }
+                });
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -127,24 +167,58 @@ public class MainActivityInside extends AppCompatActivity {
 
             Date date = Calendar.getInstance().getTime();
             Note.Priority priority = (Note.Priority) data.getSerializableExtra(ActivityForNoteBuild.EXTRA_REPLY_PRIORITY);
-            Bitmap btm = data.getParcelableExtra(ActivityForNoteBuild.EXTRA_REPLY_PHOTO);
+            //Bitmap btm = data.getParcelableExtra(ActivityForNoteBuild.EXTRA_REPLY_PHOTO);
             Date pendDate = (Date) data.getSerializableExtra("date");
-            if (btm == null) {
+            /*if (btm == null) {
                 Bitmap photo = BitmapFactory.decodeResource(this.getResources(),
                         R.drawable.nophoto);
                 btm = photo;
-            }
+            }*/
 
-            Note note = new Note(data.getStringExtra(ActivityForNoteBuild.EXTRA_REPLY), date, priority, btm, pendDate);
+            Note note = new Note(id, data.getStringExtra(ActivityForNoteBuild.EXTRA_REPLY), date, priority, pendDate, 1);
 
 
             if (isEdit)
             {
-                mNoteViewModel.update(note);
+                //mNoteViewModel.update(note);
+                NetworkService.getInstance().getJSONApiEditNote().editNote(id,
+                        note.getNote(),note.isChecked(),note.getPriority().toString(),note.getDate().toString(),
+                        note.getPendingDate().toString(),getIntent().getIntExtra("user",1))
+                        .enqueue(new Callback<Void>() {
+                            @Override
+                            public void onResponse(Call<Void> call, Response<Void> response) {
+                                Toast toast = Toast.makeText(getApplicationContext(),
+                                        "successful", Toast.LENGTH_SHORT);
+                                toast.show();
+                            }
+
+                            @Override
+                            public void onFailure(Call<Void> call, Throwable t) {
+                                Log.d("cause:", t.getMessage());
+                            }
+                        });
+
             }
             else {
-                mNoteViewModel.insert(note);
+                //mNoteViewModel.insert(note);
+                NetworkService.getInstance().getJSONApiInsertNote().insertNote(note.getNote(),note.isChecked(),note.getPriority().toString(),note.getDate().toString(),
+                        note.getPendingDate().toString(),getIntent().getIntExtra("user",1))
+                        .enqueue(new Callback<Void>() {
+                            @Override
+                            public void onResponse(Call<Void> call, Response<Void> response) {
+                                Toast toast = Toast.makeText(getApplicationContext(),
+                                        "successful", Toast.LENGTH_SHORT);
+                                toast.show();
+                            }
+
+                            @Override
+                            public void onFailure(Call<Void> call, Throwable t) {
+                                Log.d("cause:", t.getMessage());
+                            }
+                        });
+
             }
+
 
 
             long timeInMilliseconds = note.getPendingDate().getTime();
@@ -169,20 +243,52 @@ public class MainActivityInside extends AppCompatActivity {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
-                    case R.id.showPhoto:
+                    /*case R.id.showPhoto:
                         Intent imgIntent = new Intent(MainActivityInside.this, GalleryActivity.class);
                         Note myNote = adapter.getNoteAtPosition(position);
                         imgIntent.putExtra("photo", myNote.getPhoto());
                         startActivity(imgIntent);
-                        return true;
+                        return true;*/
                     case R.id.setDone:
                         Note myNoteForIsDone = adapter.getNoteAtPosition(position);
                         myNoteForIsDone.setChecked(!myNoteForIsDone.isChecked());
-                        mNoteViewModel.update(myNoteForIsDone);
+                        //mNoteViewModel.update(myNoteForIsDone);
+                        NetworkService.getInstance().getJSONApiEditNote().editNote(myNoteForIsDone.getId(),
+                                myNoteForIsDone.getNote(),myNoteForIsDone.isChecked(),myNoteForIsDone.getPriority().toString(),myNoteForIsDone.getDate().toString(),
+                                myNoteForIsDone.getPendingDate().toString(),myNoteForIsDone.getUserId())
+                                .enqueue(new Callback<Void>() {
+                                    @Override
+                                    public void onResponse(Call<Void> call, Response<Void> response) {
+                                        Toast toast = Toast.makeText(getApplicationContext(),
+                                                "successful", Toast.LENGTH_SHORT);
+                                        toast.show();
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<Void> call, Throwable t) {
+                                        Log.d("cause:", t.getMessage());
+                                    }
+                                });
+
                         return true;
                     case R.id.delete:
                         Note myNoteForDel = adapter.getNoteAtPosition(position);
-                        mNoteViewModel.delete(myNoteForDel);
+                        //mNoteViewModel.delete(myNoteForDel);
+                        NetworkService.getInstance().getJSONApiDeleteNote().deleteNote(myNoteForDel.getId())
+                                .enqueue(new Callback<Void>() {
+                                    @Override
+                                    public void onResponse(Call<Void> call, Response<Void> response) {
+                                        Toast toast = Toast.makeText(getApplicationContext(),
+                                                "successful", Toast.LENGTH_SHORT);
+                                        toast.show();
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<Void> call, Throwable t) {
+                                        Log.d("cause:", t.getMessage());
+                                    }
+                                });
+
                         return true;
                     case R.id.edit:
                         Note myNoteForEdit = adapter.getNoteAtPosition(position);

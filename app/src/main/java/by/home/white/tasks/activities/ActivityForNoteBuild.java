@@ -1,21 +1,15 @@
-package by.home.white.tasks;
+package by.home.white.tasks.activities;
 
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.app.TimePickerDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.text.format.Time;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -29,18 +23,23 @@ import android.widget.TimePicker;
 import java.util.Calendar;
 import java.util.Date;
 
+import by.home.white.tasks.fragments.DateFragment;
+import by.home.white.tasks.entities.Note;
+import by.home.white.tasks.R;
+import by.home.white.tasks.fragments.TimeFragment;
+
 public class ActivityForNoteBuild extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
 
     public static final String EXTRA_REPLY = "com.example.android.wordlistsql.REPLY";
     public static final String EXTRA_REPLY_PRIORITY = "com.example.android.wordlistsql.REPLY_FOR_PRIORITY";
-    public static final String EXTRA_REPLY_PHOTO = "com.example.android.wordlistsql.REPLY_FOR_PHOTO";
-    static final int REQUEST_IMAGE_CAPTURE = 1;
+    //public static final String EXTRA_REPLY_PHOTO = "com.example.android.wordlistsql.REPLY_FOR_PHOTO";
+    //static final int REQUEST_IMAGE_CAPTURE = 1;
     public boolean isEdit = false;
 
 
     EditText mEditNoteView;
     Note.Priority item;
-    Bitmap photo;
+    //Bitmap photo;
     TextView tvForPhoto;
     Date pendDate = new Date();
     Calendar calendar;
@@ -88,7 +87,7 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
             int spinnerPosition = myAdap.getPosition(note.getPriority());
             spinner.setSelection(spinnerPosition);
             mEditNoteView.setText(note.getNote());
-            photo = note.getPhoto();
+            //photo = note.getPhoto();
             pendDate = note.getPendingDate();
 
         }
@@ -103,13 +102,13 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
             }
         });
 
-        Button photoBtn = (Button) findViewById(R.id.buttonForPhoto);
+        /*Button photoBtn = (Button) findViewById(R.id.buttonForPhoto);
         photoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dispatchTakePictureIntent();
             }
-        });
+        }); */
 
 
         final FloatingActionButton button = findViewById(R.id.saveButton);
@@ -124,7 +123,7 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
 
                     replyIntent.putExtra(EXTRA_REPLY_PRIORITY, item);
 
-                    replyIntent.putExtra(EXTRA_REPLY_PHOTO, photo);
+                    //replyIntent.putExtra(EXTRA_REPLY_PHOTO, photo);
 
                     replyIntent.putExtra("date", pendDate);
 
@@ -155,7 +154,7 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
 
 
 
-    private void dispatchTakePictureIntent() {
+    /*private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
@@ -176,7 +175,7 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
             }
             photo = imageBitmap;
         }
-    }
+    }*/
 
 
     @Override

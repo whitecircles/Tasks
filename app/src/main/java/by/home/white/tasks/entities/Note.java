@@ -1,4 +1,4 @@
-package by.home.white.tasks;
+package by.home.white.tasks.entities;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
@@ -9,7 +9,14 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Date;
+
+import by.home.white.tasks.converters.PriorityConverter;
+import by.home.white.tasks.converters.BitmapConverter;
+import by.home.white.tasks.converters.DateConverter;
 
 @Entity(tableName = "note_table")
 public class Note implements Parcelable {
@@ -17,25 +24,39 @@ public class Note implements Parcelable {
 
 
 
+    //----------------field
+    @SerializedName("Id")
+    @Expose
+    @PrimaryKey
+    @NonNull
+    @ColumnInfo(name = "Id")
+    private int mId;
 
     //----------------field
-    @PrimaryKey
+    @SerializedName("note")
+    @Expose
     @NonNull
     @ColumnInfo(name = "note")
     private String mNote;
 
     //----------------field
+    @SerializedName("isChecked")
+    @Expose
     @NonNull
     @ColumnInfo(name = "isDone")
     private boolean mChecked;
 
     //----------------field
+    @SerializedName("priority")
+    @Expose
     @NonNull
     @ColumnInfo(name = "priority")
     @TypeConverters(PriorityConverter.class)
     private Priority mPriority;
 
     //----------------field
+    @SerializedName("date")
+    @Expose
     @NonNull
     @ColumnInfo(name = "date")
     @TypeConverters(DateConverter.class)
@@ -44,36 +65,51 @@ public class Note implements Parcelable {
 
     //----------------field
     //@NonNull
-    @ColumnInfo(name = "photo")
-    @TypeConverters(BitmapConverter.class)
-    private Bitmap mPhoto;
 
+    //@ColumnInfo(name = "photo")
+    //@TypeConverters(BitmapConverter.class)
+    //private Bitmap mPhoto;
 
-
+    //----------------field
+    @SerializedName("pendDate")
+    @Expose
     @ColumnInfo(name = "pendDate")
     @TypeConverters(DateConverter.class)
     private Date mPendingDate;
 
 
+
+    @SerializedName("userId")
+    @Expose
+    @ColumnInfo(name = "userId")
+    private int mUserId;
+
+
     //----------------constructor
-    public Note(String note, Date date, Priority priority, Bitmap photo, Date pendingDate) {
+    public Note(int id, String note, Date date, Priority priority, Date pendingDate, int userId) {
+        this.mId = id;
         this.mNote = note;
         this.mDate = date;
         this.mPriority = priority;
-        this.mPhoto = photo;
+        //this.mPhoto = photo;
         this.mPendingDate = pendingDate;
+        this.mUserId = userId;
     }
 
     protected Note(Parcel in) {
+        mId = in.readInt();
         mNote = in.readString();
         mChecked = in.readByte() != 0;
         mDate = (Date) in.readSerializable();
         mPendingDate = (Date) in.readSerializable();
-        mPhoto = in.readParcelable(Bitmap.class.getClassLoader());
+        //mPhoto = in.readParcelable(Bitmap.class.getClassLoader());
         mPriority = Priority.values()[in.readInt()];
+        mUserId = in.readInt();
 
 
     }
+
+
 
     public static final Creator<Note> CREATOR = new Creator<Note>() {
         @Override
@@ -87,6 +123,23 @@ public class Note implements Parcelable {
         }
     };
 
+    @NonNull
+    public int getId() {
+        return mId;
+    }
+
+    public void setId(@NonNull int mId) {
+        this.mId = mId;
+    }
+
+    public int getUserId() {
+        return mUserId;
+    }
+
+    public void setUserId(int mUserId) {
+        this.mUserId = mUserId;
+    }
+
     public Date getPendingDate() {
         return mPendingDate;
     }
@@ -95,14 +148,14 @@ public class Note implements Parcelable {
         this.mPendingDate = mPendingDate;
     }
 
-    @NonNull
-    public Bitmap getPhoto() {
-        return mPhoto;
+    /*@NonNull
+    //public Bitmap getPhoto() {
+       return mPhoto;
     }
 
-    public void setPhoto(@NonNull Bitmap mPhoto) {
+    //public void setPhoto(@NonNull Bitmap mPhoto) {
         this.mPhoto = mPhoto;
-    }
+    }*/
 
     @NonNull
     public Date getDate() {
@@ -151,13 +204,14 @@ public class Note implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-
+        dest.writeInt(mId);
         dest.writeString(mNote);
         dest.writeInt(mChecked ? 1 : 0);
         dest.writeSerializable(mDate);
         dest.writeSerializable(mPendingDate);
-        dest.writeParcelable(mPhoto, flags);
+        //dest.writeParcelable(mPhoto, flags);
         dest.writeInt(mPriority.ordinal());
+        dest.writeInt(mUserId);
     }
 
     public enum Priority {
