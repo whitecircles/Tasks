@@ -1,9 +1,7 @@
-package by.home.white.tasks;
+package by.home.white.tasks.reclrView;
 
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
@@ -16,12 +14,15 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import by.home.white.tasks.R;
+import by.home.white.tasks.entities.Note;
+
 public class ReclrAdapter extends RecyclerView.Adapter<ReclrAdapter.ViewHolder> {
     class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView noteItemView;
         private final CheckBox noteCheckBox;
         private final TextView noteDateView;
-        private final ImageView noteImageView;
+        //private final ImageView noteImageView;
         private final TextView noteDateToView;
 
 
@@ -30,7 +31,7 @@ public class ReclrAdapter extends RecyclerView.Adapter<ReclrAdapter.ViewHolder> 
             noteItemView = itemView.findViewById(R.id.textView);
             noteCheckBox = itemView.findViewById(R.id.checkBox);
             noteDateView = itemView.findViewById(R.id.textViewForDate);
-            noteImageView = itemView.findViewById(R.id.imageView);
+            //noteImageView = itemView.findViewById(R.id.imageView);
             noteDateToView = itemView.findViewById(R.id.textViewForDateTo);
 
 
@@ -42,7 +43,7 @@ public class ReclrAdapter extends RecyclerView.Adapter<ReclrAdapter.ViewHolder> 
     private Context mContext;// Cached copy of words
     //private ArrayList<Bitmap> mPhotos;
 
-    ReclrAdapter(Context context) {
+    public ReclrAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
 
     }
@@ -80,14 +81,14 @@ public class ReclrAdapter extends RecyclerView.Adapter<ReclrAdapter.ViewHolder> 
             holder.noteDateToView.setText("To: " + current.getPendingDate().toString());
 
 
-            holder.noteImageView.setImageBitmap(current.getPhoto());
+            //holder.noteImageView.setImageBitmap(current.getPhoto());
         } else {
             // Covers the case of data not being ready yet.
             holder.noteItemView.setText("No Note");
         }
     }
 
-    void setNotes(List<Note> words){
+    public void setNotes(List<Note> words){
         mNotes = words;
         notifyDataSetChanged();
     }
