@@ -1,4 +1,4 @@
-package by.home.white.tasks;
+package by.home.white.tasks.converters;
 
 import android.arch.persistence.room.TypeConverter;
 

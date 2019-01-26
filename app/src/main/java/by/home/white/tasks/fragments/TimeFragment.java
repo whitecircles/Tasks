@@ -1,4 +1,4 @@
-package by.home.white.tasks;
+package by.home.white.tasks.fragments;
 
 import android.app.Dialog;
 import android.app.TimePickerDialog;

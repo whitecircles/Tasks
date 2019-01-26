@@ -9,7 +9,7 @@ import retrofit2.http.Headers;
 
 
 public interface JSONApiGetUsers {
-    @Headers("Content-Type:application/json; charset=UTF-8")
+    //@Headers("Content-Type:application/json; charset=UTF-8")
     @GET("api/user")
     Call<List<User>> getUsers();
 }

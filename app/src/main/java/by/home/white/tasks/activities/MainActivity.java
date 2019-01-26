@@ -9,12 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.List;
 
 import by.home.white.tasks.MainActivityInside;
@@ -44,6 +39,14 @@ public class MainActivity extends AppCompatActivity {
         final EditText eForName = findViewById(R.id.editTextForName);
         final EditText eForPass = findViewById(R.id.editTextForPass);
         final TextView textView = findViewById(R.id.textViewForRaw);
+        Button btnForReg = findViewById(R.id.BtnForRegistr);
+
+        btnForReg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentForReg = new Intent(MainActivity.this, ActivityForRegistration.class);
+            }
+        });
 
         final Intent intent = new Intent(MainActivity.this, MainActivityInside.class);
 
@@ -53,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
                              @Override
                              public void onResponse(Call<List<User>> call, Response<List<User>> response) {
 
-                                 textView.setText(response.raw().toString());
+                                 textView.setText(response.body().toString());
                                  users = response.body();
                                  if (users != null) {
                                      isDone = true;

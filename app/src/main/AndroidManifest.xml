@@ -2,10 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="by.home.white.tasks">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -22,7 +21,10 @@
         <activity android:name=".activities.ActivityForNoteBuild" />
         <activity android:name=".activities.GalleryActivity" />
         <activity android:name=".MainActivityInside" />
+
         <receiver android:name=".NotificationPublisher" />
+
+        <activity android:name=".activities.ActivityForRegistration"></activity>
     </application>
 
 </manifest>

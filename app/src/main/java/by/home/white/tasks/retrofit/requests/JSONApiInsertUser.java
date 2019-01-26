@@ -12,7 +12,7 @@ import retrofit2.http.Path;
 public interface JSONApiInsertUser {
 
     @GET("api/user/add/{name}/{password}")
-    Call<List<User>> insertUser(@Path("name") String name, @Path("password") String password);
+    Call<Void> insertUser(@Path("name") String name, @Path("password") String password);
 }
 
 

@@ -8,12 +8,13 @@ import by.home.white.tasks.retrofit.requests.JSONApiGetUsers;
 
 
 import by.home.white.tasks.retrofit.requests.JSONApiInsertNote;
+import by.home.white.tasks.retrofit.requests.JSONApiInsertUser;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class NetworkService {
     private static NetworkService mInstance;
-    private static final String BASE_URL = "https://jsonplaceholder.typicode.com";
+    private static final String BASE_URL = "https://matskotest.azurewebsites.net/";
     private Retrofit mRetrofit;
     String body;
 
@@ -50,6 +51,10 @@ public class NetworkService {
 
     public JSONApiDeleteNote getJSONApiDeleteNote() {
         return mRetrofit.create(JSONApiDeleteNote.class);
+    }
+
+    public JSONApiInsertUser getJSONApiInsertUser() {
+        return mRetrofit.create(JSONApiInsertUser.class);
     }
 }
 

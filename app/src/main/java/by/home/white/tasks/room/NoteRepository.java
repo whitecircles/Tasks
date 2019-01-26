@@ -1,11 +1,12 @@
-package by.home.white.tasks;
+package by.home.white.tasks.room;
 
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+
+import by.home.white.tasks.entities.Note;
 
 public class NoteRepository {
     private NoteDao mNoteDao;

@@ -1,17 +1,18 @@
-package by.home.white.tasks;
+package by.home.white.tasks.room;
 
 
 import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
-import android.arch.persistence.room.TypeConverters;
 import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
-@Database(entities = {Note.class}, version = 2)
+import by.home.white.tasks.entities.Note;
+
+@Database(entities = {Note.class}, version = 1)
 
 public abstract class NoteRoomDatabase extends RoomDatabase {
     public abstract NoteDao noteDao();
@@ -19,7 +20,7 @@ public abstract class NoteRoomDatabase extends RoomDatabase {
 
     private static volatile NoteRoomDatabase INSTANCE;
 
-    static NoteRoomDatabase getDatabase(final Context context) {
+    public static NoteRoomDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
             synchronized (NoteRoomDatabase.class) {
                 if (INSTANCE == null) {

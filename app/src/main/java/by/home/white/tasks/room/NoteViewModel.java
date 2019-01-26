@@ -1,12 +1,14 @@
-package by.home.white.tasks;
+package by.home.white.tasks.room;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import by.home.white.tasks.entities.Note;
+import by.home.white.tasks.room.NoteRepository;
 
 public class NoteViewModel extends AndroidViewModel {
     private NoteRepository mRepository;
@@ -24,7 +26,7 @@ public class NoteViewModel extends AndroidViewModel {
 
     }
 
-    LiveData<List<Note>> getAllNotes() { return mAllWords; }
+    public LiveData<List<Note>> getAllNotes() { return mAllWords; }
 
 
 

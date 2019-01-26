@@ -81,7 +81,7 @@ public class MainActivityInside extends AppCompatActivity {
         rv.addOnItemTouchListener(new ReclrItemClickListener(this, rv, new ReclrItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, final int position) {
-                Note myNoteForIsDone = adapter.getNoteAtPosition(position);
+                final Note myNoteForIsDone = adapter.getNoteAtPosition(position);
                 myNoteForIsDone.setChecked(!myNoteForIsDone.isChecked());
                 //mNoteViewModel.update(myNoteForIsDone);
                 NetworkService.getInstance().getJSONApiEditNote().editNote(myNoteForIsDone.getId(),
@@ -93,6 +93,8 @@ public class MainActivityInside extends AppCompatActivity {
                                 Toast toast = Toast.makeText(getApplicationContext(),
                                         "successful", Toast.LENGTH_SHORT);
                                 toast.show();
+                                nts.set(myNoteForIsDone.getId(), myNoteForIsDone);
+                                adapter.notifyDataSetChanged();
                             }
 
                             @Override
@@ -175,7 +177,7 @@ public class MainActivityInside extends AppCompatActivity {
                 btm = photo;
             }*/
 
-            Note note = new Note(id, data.getStringExtra(ActivityForNoteBuild.EXTRA_REPLY), date, priority, pendDate, 1);
+            final Note note = new Note(id, data.getStringExtra(ActivityForNoteBuild.EXTRA_REPLY), date, priority, pendDate, 1);
 
 
             if (isEdit)
@@ -190,6 +192,16 @@ public class MainActivityInside extends AppCompatActivity {
                                 Toast toast = Toast.makeText(getApplicationContext(),
                                         "successful", Toast.LENGTH_SHORT);
                                 toast.show();
+                                for ( int i = 0; i < nts.size(); i++)
+                                {
+                                    if (nts.get(i).getId() == note.getId())
+                                    {
+                                        nts.set(nts.get(i).getId(), note);
+                                        adapter.notifyDataSetChanged();
+                                        break;
+                                    }
+                                }
+
                             }
 
                             @Override
@@ -209,6 +221,8 @@ public class MainActivityInside extends AppCompatActivity {
                                 Toast toast = Toast.makeText(getApplicationContext(),
                                         "successful", Toast.LENGTH_SHORT);
                                 toast.show();
+                                nts.add(note);
+                                adapter.notifyDataSetChanged();
                             }
 
                             @Override
@@ -250,7 +264,7 @@ public class MainActivityInside extends AppCompatActivity {
                         startActivity(imgIntent);
                         return true;*/
                     case R.id.setDone:
-                        Note myNoteForIsDone = adapter.getNoteAtPosition(position);
+                        final Note myNoteForIsDone = adapter.getNoteAtPosition(position);
                         myNoteForIsDone.setChecked(!myNoteForIsDone.isChecked());
                         //mNoteViewModel.update(myNoteForIsDone);
                         NetworkService.getInstance().getJSONApiEditNote().editNote(myNoteForIsDone.getId(),
@@ -262,7 +276,19 @@ public class MainActivityInside extends AppCompatActivity {
                                         Toast toast = Toast.makeText(getApplicationContext(),
                                                 "successful", Toast.LENGTH_SHORT);
                                         toast.show();
+                                        for ( int i = 0; i < nts.size(); i++)
+                                        {
+                                            if (nts.get(i).getId() == myNoteForIsDone.getId())
+                                            {
+                                                nts.set(nts.get(i).getId(), myNoteForIsDone);
+                                                adapter.notifyDataSetChanged();
+                                                break;
+                                            }
+                                        }
+
+
                                     }
+
 
                                     @Override
                                     public void onFailure(Call<Void> call, Throwable t) {
@@ -272,7 +298,7 @@ public class MainActivityInside extends AppCompatActivity {
 
                         return true;
                     case R.id.delete:
-                        Note myNoteForDel = adapter.getNoteAtPosition(position);
+                        final Note myNoteForDel = adapter.getNoteAtPosition(position);
                         //mNoteViewModel.delete(myNoteForDel);
                         NetworkService.getInstance().getJSONApiDeleteNote().deleteNote(myNoteForDel.getId())
                                 .enqueue(new Callback<Void>() {
@@ -281,6 +307,15 @@ public class MainActivityInside extends AppCompatActivity {
                                         Toast toast = Toast.makeText(getApplicationContext(),
                                                 "successful", Toast.LENGTH_SHORT);
                                         toast.show();
+                                        for ( int i = 0; i < nts.size(); i++)
+                                        {
+                                            if (nts.get(i).getId() == myNoteForDel.getId())
+                                            {
+                                                nts.remove(nts.get(i));
+                                                adapter.notifyDataSetChanged();
+                                            }
+                                        }
+
                                     }
 
                                     @Override

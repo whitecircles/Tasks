@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/backgrColor">
+    tools:context=".activities.ActivityForRegistration"
+    >
 
-    <Button
-        android:id="@+id/buttonForLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="43dp"
-        android:layout_marginStart="137dp"
-        android:text="login"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="305dp" />
-
-    <EditText
-        android:id="@+id/editTextForPass"
+    <TextView
+        android:id="@+id/textViewForName2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="70dp"
-        android:layout_marginTop="200dp"
-        android:ems="10"
-        android:inputType="textPassword"
+        android:layout_marginTop="80dp"
+        android:text="enter your name:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnForRegistr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="120dp"
+        android:layout_marginTop="300dp"
+        android:text="registrer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/editTextForName"
+        android:id="@+id/editTextForName2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="70dp"
@@ -39,7 +39,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textViewForPass"
+        android:id="@+id/textViewForPass2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="70dp"
@@ -48,33 +48,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/textViewForName"
+    <EditText
+        android:id="@+id/editTextForPass2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="70dp"
-        android:layout_marginTop="80dp"
-        android:text="enter your name:"
+        android:layout_marginTop="200dp"
+        android:ems="10"
+        android:inputType="textPassword"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textViewForRaw"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="400dp"
-        android:text="TextView"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/BtnForRegistr"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="120dp"
-        android:layout_marginTop="350dp"
-        android:text="registration"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
 </android.support.constraint.ConstraintLayout>

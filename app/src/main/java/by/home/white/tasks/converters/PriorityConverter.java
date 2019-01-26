@@ -1,10 +1,12 @@
-package by.home.white.tasks;
+package by.home.white.tasks.converters;
 
 import android.arch.persistence.room.TypeConverter;
 
-import static by.home.white.tasks.Note.Priority.HIGH;
-import static by.home.white.tasks.Note.Priority.MED;
-import static by.home.white.tasks.Note.Priority.SMALL;
+import by.home.white.tasks.entities.Note;
+
+import static by.home.white.tasks.entities.Note.Priority.HIGH;
+import static by.home.white.tasks.entities.Note.Priority.MED;
+import static by.home.white.tasks.entities.Note.Priority.SMALL;
 
 public class PriorityConverter {
     @TypeConverter

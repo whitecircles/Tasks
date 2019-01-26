@@ -1,4 +1,4 @@
-package by.home.white.tasks;
+package by.home.white.tasks.reclrView;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
