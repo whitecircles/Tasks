@@ -20,6 +20,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -38,10 +39,10 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
 
 
     EditText mEditNoteView;
-    Note.Priority item;
+    String item;
     //Bitmap photo;
     TextView tvForPhoto;
-    Date pendDate = new Date();
+    String pendDate;
     Calendar calendar;
     Note note;
 
@@ -61,7 +62,7 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
         {
             note = (Note) intent.getExtras().getParcelable("noteForEdit");
             isEdit = true;
-            mEditNoteView.setEnabled(false);
+
 
         }
 
@@ -95,10 +96,11 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent,
                                        View itemSelected, int selectedItemPosition, long selectedId) {
-                item = Note.Priority.values()[selectedItemPosition];
+                item = spinner.getSelectedItem().toString();;
             }
 
             public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
 
@@ -114,6 +116,10 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
         final FloatingActionButton button = findViewById(R.id.saveButton);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+                if (item == null) {
+                    item = "SMALL";
+                }
+
                 Intent replyIntent = new Intent();
                 if (TextUtils.isEmpty(mEditNoteView.getText())) {
                     setResult(RESULT_CANCELED, replyIntent);
@@ -128,6 +134,12 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
                     replyIntent.putExtra("date", pendDate);
 
                     replyIntent.putExtra("isEdit", isEdit);
+
+                    replyIntent.putExtra("user2", getIntent().getIntExtra("uIdent",1));
+                    if (isEdit == true)
+                    {
+                        replyIntent.putExtra("EditFor", note.getId());
+                    }
 
                     setResult(RESULT_OK, replyIntent);
                 }
@@ -146,7 +158,7 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
 
 
                 calendar = Calendar.getInstance();
-                pendDate = calendar.getTime();
+
 
             }
         });
@@ -186,7 +198,8 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
 
-        pendDate = calendar.getTime();
+        SimpleDateFormat formatsimple = new SimpleDateFormat("yyMMddHHmmss");
+        pendDate = formatsimple.format(calendar.getTime());
     }
 
 

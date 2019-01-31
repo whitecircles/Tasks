@@ -13,7 +13,7 @@ import retrofit2.http.Path;
 public interface JSONApiGetNotes {
     @Headers("Content-Type:application/json; charset=UTF-8")
     @GET("api/task/{id}")
-    Call<List<Note>> getNotes(@Path("Id") int id);
+    Call<List<Note>> getNotes(@Path("id") int id);
 }
 
 

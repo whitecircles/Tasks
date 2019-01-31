@@ -60,10 +60,10 @@ public class ReclrAdapter extends RecyclerView.Adapter<ReclrAdapter.ViewHolder> 
         if (mNotes != null) {
             Note current = mNotes.get(position);
             holder.noteItemView.setText(current.getNote());
-            if (current.getPriority() == Note.Priority.valueOf("HIGH")) {
+            if (current.getPriority() == "HIGH") {
                 holder.noteItemView.setTextColor(Color.RED);
             }
-            else if (current.getPriority() == Note.Priority.valueOf("MED")) {
+            else if (current.getPriority() == "MED") {
                 holder.noteItemView.setTextColor(Color.MAGENTA);
             }
             else {

@@ -2,11 +2,13 @@ package by.home.white.tasks.activities;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -21,7 +23,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-
+//it works
 public class MainActivity extends AppCompatActivity {
 
     Intent intent;
@@ -34,21 +36,36 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
 
-
+        final CheckBox chbSave = findViewById(R.id.checkBoxForSave);
         Button loginBtn = findViewById(R.id.buttonForLogin);
         final EditText eForName = findViewById(R.id.editTextForName);
         final EditText eForPass = findViewById(R.id.editTextForPass);
-        final TextView textView = findViewById(R.id.textViewForRaw);
+
         Button btnForReg = findViewById(R.id.BtnForRegistr);
 
         btnForReg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intentForReg = new Intent(MainActivity.this, ActivityForRegistration.class);
+                startActivity(intentForReg);
             }
         });
 
-        final Intent intent = new Intent(MainActivity.this, MainActivityInside.class);
+
+
+        final SharedPreferences pref = getSharedPreferences("savedIdentifs", MODE_PRIVATE);
+        boolean isSaved = pref.getBoolean("isSaved", false);
+        if (isSaved) {
+            String passPref = pref.getString("passToSave", "");
+            String namePref = pref.getString("nameToSave", "");
+            eForName.setText(namePref);
+            eForPass.setText(passPref);
+
+        }
+
+
+
+
 
         //---------
         NetworkService.getInstance().getJSONApiGetUsers().getUsers()
@@ -56,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
                              @Override
                              public void onResponse(Call<List<User>> call, Response<List<User>> response) {
 
-                                 textView.setText(response.body().toString());
                                  users = response.body();
                                  if (users != null) {
                                      isDone = true;
@@ -81,11 +97,26 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (isDone) {
-                    for (int i = 0; i < users.size(); i++) {
-                        if ((users.get(i).getName().equals(eForName.getText().toString())) && (users.get(i).getPasswrd().equals(eForPass.getText().toString()))) {
+                    if (chbSave.isChecked())
+                    {
+                        SharedPreferences.Editor editor = pref.edit();
 
-                            intent.putExtra("user", 1);
+                        editor.putBoolean("isSaved", true);
+                        editor.putString("passToSave", eForPass.getText().toString());
+                        editor.putString("nameToSave", eForName.getText().toString());
+                        editor.commit();
+                    }
+
+
+
+
+                    for (int i = 0; i < users.size(); i++) {
+                        if ((users.get(i).getName().replaceAll("\\s+","").equals(eForName.getText().toString())) && (users.get(i).getPasswrd().replaceAll("\\s+","").equals(eForPass.getText().toString()))) {
+                            Intent intent = new Intent(MainActivity.this, MainActivityInside.class);
+                            int chosenUser = users.get(i).getId();
+                            intent.putExtra("user", chosenUser);
                             startActivity(intent);
+
 
                         }
                     }

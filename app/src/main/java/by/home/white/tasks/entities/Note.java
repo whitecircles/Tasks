@@ -4,7 +4,6 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
-import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -14,11 +13,10 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
 
-import by.home.white.tasks.converters.PriorityConverter;
-import by.home.white.tasks.converters.BitmapConverter;
 import by.home.white.tasks.converters.DateConverter;
+import by.home.white.tasks.converters.PriorityConverter;
 
-@Entity(tableName = "note_table")
+@Entity
 public class Note implements Parcelable {
 
 
@@ -27,68 +25,44 @@ public class Note implements Parcelable {
     //----------------field
     @SerializedName("Id")
     @Expose
-    @PrimaryKey
-    @NonNull
-    @ColumnInfo(name = "Id")
     private int mId;
 
     //----------------field
     @SerializedName("note")
     @Expose
-    @NonNull
-    @ColumnInfo(name = "note")
     private String mNote;
 
     //----------------field
     @SerializedName("isChecked")
     @Expose
-    @NonNull
-    @ColumnInfo(name = "isDone")
     private boolean mChecked;
 
     //----------------field
     @SerializedName("priority")
     @Expose
-    @NonNull
-    @ColumnInfo(name = "priority")
-    @TypeConverters(PriorityConverter.class)
-    private Priority mPriority;
+    private String mPriority;
 
     //----------------field
     @SerializedName("date")
     @Expose
-    @NonNull
-    @ColumnInfo(name = "date")
-    @TypeConverters(DateConverter.class)
-    private Date mDate;
-
-
-    //----------------field
-    //@NonNull
-
-    //@ColumnInfo(name = "photo")
-    //@TypeConverters(BitmapConverter.class)
-    //private Bitmap mPhoto;
+    private String mDate;
 
     //----------------field
     @SerializedName("pendDate")
     @Expose
-    @ColumnInfo(name = "pendDate")
-    @TypeConverters(DateConverter.class)
-    private Date mPendingDate;
+    private String mPendingDate;
 
-
-
+    //----------------field
     @SerializedName("userId")
     @Expose
-    @ColumnInfo(name = "userId")
     private int mUserId;
 
 
     //----------------constructor
-    public Note(int id, String note, Date date, Priority priority, Date pendingDate, int userId) {
+    public Note(int id, String note, boolean isChecked, String date, String priority, String pendingDate, int userId) {
         this.mId = id;
         this.mNote = note;
+        this.mChecked = isChecked;
         this.mDate = date;
         this.mPriority = priority;
         //this.mPhoto = photo;
@@ -100,10 +74,10 @@ public class Note implements Parcelable {
         mId = in.readInt();
         mNote = in.readString();
         mChecked = in.readByte() != 0;
-        mDate = (Date) in.readSerializable();
-        mPendingDate = (Date) in.readSerializable();
+        mDate = in.readString();
+        mPendingDate = in.readString();
         //mPhoto = in.readParcelable(Bitmap.class.getClassLoader());
-        mPriority = Priority.values()[in.readInt()];
+        mPriority = in.readString();
         mUserId = in.readInt();
 
 
@@ -123,13 +97,45 @@ public class Note implements Parcelable {
         }
     };
 
-    @NonNull
-    public int getId() {
-        return mId;
+    public String getNote() {
+        return mNote;
     }
 
-    public void setId(@NonNull int mId) {
-        this.mId = mId;
+    public void setNote(String mNote) {
+        this.mNote = mNote;
+    }
+
+    public boolean isChecked() {
+        return mChecked;
+    }
+
+    public void setChecked(boolean mChecked) {
+        this.mChecked = mChecked;
+    }
+
+    @NonNull
+    public String getPriority() {
+        return mPriority;
+    }
+
+    public void setPriority(@NonNull String mPriority) {
+        this.mPriority = mPriority;
+    }
+
+    public String getDate() {
+        return mDate;
+    }
+
+    public void setDate(String mDate) {
+        this.mDate = mDate;
+    }
+
+    public String getPendingDate() {
+        return mPendingDate;
+    }
+
+    public void setPendingDate(String mPendingDate) {
+        this.mPendingDate = mPendingDate;
     }
 
     public int getUserId() {
@@ -140,13 +146,16 @@ public class Note implements Parcelable {
         this.mUserId = mUserId;
     }
 
-    public Date getPendingDate() {
-        return mPendingDate;
+    @NonNull
+    public int getId() {
+        return mId;
     }
 
-    public void setPendingDate(Date mPendingDate) {
-        this.mPendingDate = mPendingDate;
+    public void setId(@NonNull int mId) {
+        this.mId = mId;
     }
+
+
 
     /*@NonNull
     //public Bitmap getPhoto() {
@@ -157,45 +166,6 @@ public class Note implements Parcelable {
         this.mPhoto = mPhoto;
     }*/
 
-    @NonNull
-    public Date getDate() {
-        return mDate;
-    }
-
-
-
-    public void setDate(@NonNull Date mDate) {
-        this.mDate = mDate;
-    }
-
-    @NonNull
-    public Priority getPriority() {
-        return mPriority;
-    }
-
-    public void setPriority(@NonNull Priority mPriority) {
-        this.mPriority = mPriority;
-    }
-
-
-
-    @NonNull
-    public String getNote() {
-        return mNote;
-    }
-
-    public void setNote(@NonNull String mNote) {
-        this.mNote = mNote;
-    }
-
-    @NonNull
-    public boolean isChecked() {
-        return mChecked;
-    }
-
-    public void setChecked(@NonNull boolean mChecked) {
-        this.mChecked = mChecked;
-    }
 
     @Override
     public int describeContents() {
@@ -207,10 +177,10 @@ public class Note implements Parcelable {
         dest.writeInt(mId);
         dest.writeString(mNote);
         dest.writeInt(mChecked ? 1 : 0);
-        dest.writeSerializable(mDate);
-        dest.writeSerializable(mPendingDate);
+        dest.writeString(mDate);
+        dest.writeString(mPendingDate);
         //dest.writeParcelable(mPhoto, flags);
-        dest.writeInt(mPriority.ordinal());
+        dest.writeString(mPriority);
         dest.writeInt(mUserId);
     }
 

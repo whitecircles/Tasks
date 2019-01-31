@@ -23,6 +23,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -33,7 +35,7 @@ import by.home.white.tasks.retrofit.NetworkService;
 import by.home.white.tasks.reclrView.ReclrAdapter;
 import by.home.white.tasks.reclrView.ReclrItemClickListener;
 import by.home.white.tasks.entities.Note;
-import by.home.white.tasks.room.NoteRoomDatabase;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -49,14 +51,21 @@ public class MainActivityInside extends AppCompatActivity {
 
     RecyclerView rv;
     ReclrAdapter adapter;
-    Date pendDate;
+    String pendDate;
     List<Note> nts;
+    int user;
+    int editFor;
+    NotificationManager notificationManager;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_inside);
+
+        Intent mainintent = getIntent();
+            user = mainintent.getIntExtra("user",0);
+
 
         /*mNoteViewModel = ViewModelProviders.of(this).get(NoteViewModel.class);
 
@@ -81,20 +90,29 @@ public class MainActivityInside extends AppCompatActivity {
         rv.addOnItemTouchListener(new ReclrItemClickListener(this, rv, new ReclrItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, final int position) {
-                final Note myNoteForIsDone = adapter.getNoteAtPosition(position);
+                Note myNoteForIsDone = adapter.getNoteAtPosition(position);
                 myNoteForIsDone.setChecked(!myNoteForIsDone.isChecked());
+
+                        nts.set(position, myNoteForIsDone);
+                        adapter.notifyDataSetChanged();
+
+
+
                 //mNoteViewModel.update(myNoteForIsDone);
+
+                //{id}/{note}/{isChecked}/{priority}/{date}/{pendDate}/{userId}
                 NetworkService.getInstance().getJSONApiEditNote().editNote(myNoteForIsDone.getId(),
-                        myNoteForIsDone.getNote(),myNoteForIsDone.isChecked(),myNoteForIsDone.getPriority().toString(),myNoteForIsDone.getDate().toString(),
-                        myNoteForIsDone.getPendingDate().toString(),myNoteForIsDone.getUserId())
+                        myNoteForIsDone.getNote(),myNoteForIsDone.isChecked(),myNoteForIsDone.getPriority(),myNoteForIsDone.getDate().toString(),
+                        myNoteForIsDone.getPendingDate(),myNoteForIsDone.getUserId())
                         .enqueue(new Callback<Void>() {
                             @Override
                             public void onResponse(Call<Void> call, Response<Void> response) {
+
+
                                 Toast toast = Toast.makeText(getApplicationContext(),
                                         "successful", Toast.LENGTH_SHORT);
                                 toast.show();
-                                nts.set(myNoteForIsDone.getId(), myNoteForIsDone);
-                                adapter.notifyDataSetChanged();
+
                             }
 
                             @Override
@@ -119,7 +137,9 @@ public class MainActivityInside extends AppCompatActivity {
 
         rv.setAdapter(adapter);
 
-        NetworkService.getInstance().getJSONApiGetNotes().getNotes(getIntent().getIntExtra("user",1))
+
+
+        NetworkService.getInstance().getJSONApiGetNotes().getNotes(user)
                 .enqueue(new Callback<List<Note>>() {
                     @Override
                     public void onResponse(Call<List<Note>> call, Response<List<Note>> response) {
@@ -142,6 +162,7 @@ public class MainActivityInside extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivityInside.this, ActivityForNoteBuild.class);
+                intent.putExtra("uIdent", user);
                 startActivityForResult(intent, NEW_NOTE_ACTIVITY_REQUEST_CODE);
             }
         });
@@ -154,53 +175,59 @@ public class MainActivityInside extends AppCompatActivity {
 
         if (requestCode == NEW_NOTE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
             isEdit = data.getBooleanExtra("isEdit", false);
+            if (isEdit)
+            {
+                editFor = data.getIntExtra("EditFor", 0);
+            }
 
 
-
-            SharedPreferences pref = getSharedPreferences("identifiers", MODE_PRIVATE);
-            int id = pref.getInt("id", 0);
-            SharedPreferences.Editor editor = pref.edit();
-
-
-            editor.putInt("id", id + 1);
-            editor.commit();
-
-
-
-            Date date = Calendar.getInstance().getTime();
-            Note.Priority priority = (Note.Priority) data.getSerializableExtra(ActivityForNoteBuild.EXTRA_REPLY_PRIORITY);
+            SimpleDateFormat formatsimple2 = new SimpleDateFormat("yyMMddHHmmss");
+            String now = formatsimple2.format(Calendar.getInstance().getTime());
+            String priority = data.getStringExtra(ActivityForNoteBuild.EXTRA_REPLY_PRIORITY);
             //Bitmap btm = data.getParcelableExtra(ActivityForNoteBuild.EXTRA_REPLY_PHOTO);
-            Date pendDate = (Date) data.getSerializableExtra("date");
+            pendDate = data.getStringExtra("date");
+            if (pendDate == null)
+                pendDate = formatsimple2.format(Calendar.getInstance().getTime());
             /*if (btm == null) {
                 Bitmap photo = BitmapFactory.decodeResource(this.getResources(),
                         R.drawable.nophoto);
                 btm = photo;
             }*/
 
-            final Note note = new Note(id, data.getStringExtra(ActivityForNoteBuild.EXTRA_REPLY), date, priority, pendDate, 1);
+            String onenote = data.getStringExtra(ActivityForNoteBuild.EXTRA_REPLY);
+
+
+            //int id, String note, boolean isChecked, String date, String priority, String pendingDate, int userId
+            final Note note = new Note(editFor, onenote, false,  now, priority, pendDate, user);
 
 
             if (isEdit)
             {
                 //mNoteViewModel.update(note);
-                NetworkService.getInstance().getJSONApiEditNote().editNote(id,
-                        note.getNote(),note.isChecked(),note.getPriority().toString(),note.getDate().toString(),
-                        note.getPendingDate().toString(),getIntent().getIntExtra("user",1))
+
+
+
+                        for (int i = 0; i < nts.size(); i++)
+                        {
+                            if (nts.get(i).getId() == editFor)
+                            {
+                                nts.set(i, note);
+                                adapter.notifyDataSetChanged();
+                            }
+                        }
+
+
+
+                NetworkService.getInstance().getJSONApiEditNote().editNote(editFor,
+                        note.getNote(),note.isChecked(),note.getPriority(),note.getDate(),
+                        note.getPendingDate(),user)
                         .enqueue(new Callback<Void>() {
                             @Override
                             public void onResponse(Call<Void> call, Response<Void> response) {
                                 Toast toast = Toast.makeText(getApplicationContext(),
                                         "successful", Toast.LENGTH_SHORT);
                                 toast.show();
-                                for ( int i = 0; i < nts.size(); i++)
-                                {
-                                    if (nts.get(i).getId() == note.getId())
-                                    {
-                                        nts.set(nts.get(i).getId(), note);
-                                        adapter.notifyDataSetChanged();
-                                        break;
-                                    }
-                                }
+
 
                             }
 
@@ -213,34 +240,52 @@ public class MainActivityInside extends AppCompatActivity {
             }
             else {
                 //mNoteViewModel.insert(note);
-                NetworkService.getInstance().getJSONApiInsertNote().insertNote(note.getNote(),note.isChecked(),note.getPriority().toString(),note.getDate().toString(),
-                        note.getPendingDate().toString(),getIntent().getIntExtra("user",1))
-                        .enqueue(new Callback<Void>() {
+               // {note}/{isChecked}/{priority}/{date}/{pendDate}/{userId}
+                NetworkService.getInstance().getJSONApiInsertNote().insertNote(note.getNote(), note.isChecked(), note.getPriority(), note.getDate(),
+                        note.getPendingDate(), note.getUserId())
+                        .enqueue(new Callback<Integer>() {
                             @Override
-                            public void onResponse(Call<Void> call, Response<Void> response) {
+                            public void onResponse(Call<Integer> call, Response<Integer> response) {
+
                                 Toast toast = Toast.makeText(getApplicationContext(),
                                         "successful", Toast.LENGTH_SHORT);
                                 toast.show();
+
+                                note.setId(response.body());
+
                                 nts.add(note);
                                 adapter.notifyDataSetChanged();
                             }
 
                             @Override
-                            public void onFailure(Call<Void> call, Throwable t) {
+                            public void onFailure(Call<Integer> call, Throwable t) {
                                 Log.d("cause:", t.getMessage());
                             }
                         });
 
             }
 
+            SimpleDateFormat format = new SimpleDateFormat("yyMMddHHmmss");
+            Date pdate = null;
+            try {
+                if (note.getPendingDate() != null) {
+                    pdate = format.parse(note.getPendingDate());
 
+                }
+                else {
+                    pdate = Calendar.getInstance().getTime();
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
 
-            long timeInMilliseconds = note.getPendingDate().getTime();
+            long timeInMilliseconds = pdate.getTime();
             long timeInMillisecondsNow = (long) new Date().getTime();
             long timediff = timeInMilliseconds - timeInMillisecondsNow;
-
             if (timediff > 0) {
-                scheduleNotification(getNotification(note.getNote(), String.valueOf(id)), (int) timediff, id);
+
+
+                scheduleNotification(getNotification(note.getNote()), (int) timediff, note.getId());
                 Log.d("timinmillis", String.valueOf(timediff));
             }
 
@@ -264,37 +309,39 @@ public class MainActivityInside extends AppCompatActivity {
                         startActivity(imgIntent);
                         return true;*/
                     case R.id.setDone:
+                        //mNoteViewModel.update(myNoteForIsDone);
                         final Note myNoteForIsDone = adapter.getNoteAtPosition(position);
                         myNoteForIsDone.setChecked(!myNoteForIsDone.isChecked());
+
+                        nts.set(position, myNoteForIsDone);
+                        adapter.notifyDataSetChanged();
+
+
+
                         //mNoteViewModel.update(myNoteForIsDone);
+
+                        //{id}/{note}/{isChecked}/{priority}/{date}/{pendDate}/{userId}
                         NetworkService.getInstance().getJSONApiEditNote().editNote(myNoteForIsDone.getId(),
-                                myNoteForIsDone.getNote(),myNoteForIsDone.isChecked(),myNoteForIsDone.getPriority().toString(),myNoteForIsDone.getDate().toString(),
-                                myNoteForIsDone.getPendingDate().toString(),myNoteForIsDone.getUserId())
+                                myNoteForIsDone.getNote(),myNoteForIsDone.isChecked(),myNoteForIsDone.getPriority(),myNoteForIsDone.getDate().toString(),
+                                myNoteForIsDone.getPendingDate(),myNoteForIsDone.getUserId())
                                 .enqueue(new Callback<Void>() {
                                     @Override
                                     public void onResponse(Call<Void> call, Response<Void> response) {
+
+
                                         Toast toast = Toast.makeText(getApplicationContext(),
                                                 "successful", Toast.LENGTH_SHORT);
                                         toast.show();
-                                        for ( int i = 0; i < nts.size(); i++)
-                                        {
-                                            if (nts.get(i).getId() == myNoteForIsDone.getId())
-                                            {
-                                                nts.set(nts.get(i).getId(), myNoteForIsDone);
-                                                adapter.notifyDataSetChanged();
-                                                break;
-                                            }
-                                        }
-
 
                                     }
-
 
                                     @Override
                                     public void onFailure(Call<Void> call, Throwable t) {
                                         Log.d("cause:", t.getMessage());
                                     }
                                 });
+
+
 
                         return true;
                     case R.id.delete:
@@ -315,6 +362,7 @@ public class MainActivityInside extends AppCompatActivity {
                                                 adapter.notifyDataSetChanged();
                                             }
                                         }
+                                        notificationManager.cancel(myNoteForDel.getId());
 
                                     }
 
@@ -328,14 +376,6 @@ public class MainActivityInside extends AppCompatActivity {
                     case R.id.edit:
                         Note myNoteForEdit = adapter.getNoteAtPosition(position);
                         Intent intent = new Intent(MainActivityInside.this, ActivityForNoteBuild.class);
-                        /*
-                        intent.putExtra("note", myNoteForEdit.getNote());
-                        intent.putExtra("photo", myNoteForEdit.getPhoto());
-                        intent.putExtra("pdate", myNoteForEdit.getPendingDate());
-                        intent.putExtra("date", myNoteForEdit.getDate());
-                        intent.putExtra("isChecked", myNoteForEdit.isChecked());
-                        intent.putExtra("priority", myNoteForEdit.getPriority());
-                        */
                         intent.putExtra("noteForEdit", (Parcelable) myNoteForEdit);
                         startActivityForResult(intent, NEW_NOTE_ACTIVITY_REQUEST_CODE);
                         return true;
@@ -359,10 +399,10 @@ public class MainActivityInside extends AppCompatActivity {
         alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
     }
 
-    private Notification getNotification(String content, String id) {
+    private Notification getNotification(String content) {
 
 
-        NotificationManager notificationManager =
+        notificationManager =
                 (NotificationManager) getSystemService(this.NOTIFICATION_SERVICE);
 
         //if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -381,6 +421,8 @@ public class MainActivityInside extends AppCompatActivity {
                 new NotificationCompat.Builder(this, CHANNEL_ID)
                         .setSmallIcon(R.mipmap.ic_launcher)
                         .setContentTitle("task")
+                        // 3 hours
+                        .setTimeoutAfter (10800000)
                         .setContentText(content);
 
 
@@ -391,35 +433,8 @@ public class MainActivityInside extends AppCompatActivity {
 
 
 
-    private class getAllAsyncTask extends AsyncTask<Void, Void, List<Note>> {
-        //private NoteDao mAsyncTaskDao;
-        NoteRoomDatabase db = NoteRoomDatabase.getDatabase(MainActivityInside.this);
 
 
-        @Override
-        protected List<Note> doInBackground(Void... voids) {
-            List<Note> result = db.noteDao().getAll();
-            return result;
-
-        }
-
-        @Override
-        protected void onPostExecute(List<Note> notes) {
-            super.onPostExecute(notes);
-            nts = new ArrayList<Note>();
-            nts = notes;
-            //for (int i = 0; i < nts.size(); i++) {
-            //if ((nts.get(i).getPendingDate() != null) && (nts.get(i).getPendingDate().after(Calendar.getInstance().getTime()))) {
-
-
-
-
-
-
-            Log.d("isDone","Data loaded");
-
-        }
-    }
 }
 
 

@@ -17,6 +17,7 @@ import retrofit2.Response;
 
 public class ActivityForRegistration extends AppCompatActivity {
 
+    //it works
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,7 +27,7 @@ public class ActivityForRegistration extends AppCompatActivity {
         final EditText editForPass = findViewById(R.id.editTextForPass2);
 
 
-        Button btnToReg = findViewById(R.id.BtnForRegistr);
+        Button btnToReg = (Button) findViewById(R.id.btnForRegistr2);
         btnToReg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

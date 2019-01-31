@@ -12,9 +12,10 @@
         android:layout_width="wrap_content"
         android:layout_height="43dp"
         android:layout_marginStart="137dp"
+        android:layout_marginTop="300dp"
         android:text="login"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="305dp" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/editTextForPass"
@@ -58,14 +59,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/textViewForRaw"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="400dp"
-        android:text="TextView"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <Button
         android:id="@+id/BtnForRegistr"
         android:layout_width="wrap_content"
@@ -73,6 +66,16 @@
         android:layout_marginStart="120dp"
         android:layout_marginTop="350dp"
         android:text="registration"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <CheckBox
+        android:id="@+id/checkBoxForSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="440dp"
+        android:text="save my login"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

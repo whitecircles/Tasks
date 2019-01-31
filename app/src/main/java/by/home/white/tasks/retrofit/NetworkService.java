@@ -14,7 +14,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class NetworkService {
     private static NetworkService mInstance;
-    private static final String BASE_URL = "https://matskotest.azurewebsites.net/";
+    private static final String BASE_URL = "https://mveronicatest2.azurewebsites.net/";
     private Retrofit mRetrofit;
     String body;
 
