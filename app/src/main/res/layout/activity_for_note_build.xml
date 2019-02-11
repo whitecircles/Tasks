@@ -59,25 +59,6 @@
             android:layout_marginRight="60dp"/>
 
 
-
-        <Button
-            android:id="@+id/buttonForPhoto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="take a photo"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop = "20dp"
-            android:layout_marginLeft = "40dp"/>
-
-        <TextView
-            android:id="@+id/textViewforPhotoTaken"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="40dp"
-
-            android:text="" />
-
         <Button
             android:id="@+id/buttonForDatePick"
             android:layout_width="wrap_content"
@@ -99,6 +80,15 @@
             android:layout_width="wrap_content">
 
         </FrameLayout>
+
+        <TextView
+            android:id="@+id/textViewForDateDisplay"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:layout_marginLeft = "40dp"
+            android:layout_marginTop = "20dp"
+            />
 
 
     </LinearLayout>

@@ -12,6 +12,9 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import by.home.white.tasks.R;
@@ -60,10 +63,10 @@ public class ReclrAdapter extends RecyclerView.Adapter<ReclrAdapter.ViewHolder> 
         if (mNotes != null) {
             Note current = mNotes.get(position);
             holder.noteItemView.setText(current.getNote());
-            if (current.getPriority() == "HIGH") {
+            if (current.getPriority().equals(Note.Priority.HIGH.toString())) {
                 holder.noteItemView.setTextColor(Color.RED);
             }
-            else if (current.getPriority() == "MED") {
+            else if (current.getPriority().equals(Note.Priority.MED.toString())) {
                 holder.noteItemView.setTextColor(Color.MAGENTA);
             }
             else {
@@ -77,8 +80,26 @@ public class ReclrAdapter extends RecyclerView.Adapter<ReclrAdapter.ViewHolder> 
                 holder.noteItemView.setPaintFlags(0);
             }
             holder.noteCheckBox.setChecked(current.isChecked());
-            holder.noteDateView.setText(current.getDate().toString());
-            holder.noteDateToView.setText("To: " + current.getPendingDate().toString());
+            SimpleDateFormat format = new SimpleDateFormat("yyMMddHHmmss");
+
+            try {
+                Date date = format.parse(current.getDate());
+                SimpleDateFormat simpleDate =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String simpledate = simpleDate.format(date);
+                holder.noteDateView.setText(simpledate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                Date Pdate = format.parse(current.getPendingDate());
+                SimpleDateFormat simpleDate =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String cursimpledate = simpleDate.format(Pdate);
+                holder.noteDateToView.setText("To: " + cursimpledate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
 
 
             //holder.noteImageView.setImageBitmap(current.getPhoto());

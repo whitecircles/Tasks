@@ -1,9 +1,7 @@
 package by.home.white.tasks.entities;
 
-import android.arch.persistence.room.ColumnInfo;
+
 import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.TypeConverters;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -187,7 +185,7 @@ public class Note implements Parcelable {
     public enum Priority {
         HIGH(0),
         MED(1),
-        SMALL(2);
+        LOW(2);
 
         private int code;
 

@@ -37,13 +37,15 @@ public class MainActivity extends AppCompatActivity {
 
 
         final CheckBox chbSave = findViewById(R.id.checkBoxForSave);
-        Button loginBtn = findViewById(R.id.buttonForLogin);
+        final Button loginBtn = findViewById(R.id.buttonForLogin);
+        loginBtn.setEnabled(false);
         final EditText eForName = findViewById(R.id.editTextForName);
         final EditText eForPass = findViewById(R.id.editTextForPass);
 
-        Button btnForReg = findViewById(R.id.BtnForRegistr);
+        Button btnForRegistr = findViewById(R.id.BtnForRegistr);
 
-        btnForReg.setOnClickListener(new View.OnClickListener() {
+
+        btnForRegistr.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intentForReg = new Intent(MainActivity.this, ActivityForRegistration.class);
@@ -76,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
                                  users = response.body();
                                  if (users != null) {
                                      isDone = true;
+                                     loginBtn.setEnabled(true);
                                  }
 
                              }

@@ -12,6 +12,7 @@ import by.home.white.tasks.retrofit.requests.JSONApiInsertUser;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+
 public class NetworkService {
     private static NetworkService mInstance;
     private static final String BASE_URL = "https://mveronicatest2.azurewebsites.net/";

@@ -1,12 +1,12 @@
 package by.home.white.tasks;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Parcelable;
 import android.os.SystemClock;
@@ -19,6 +19,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -31,6 +33,10 @@ import java.util.Date;
 import java.util.List;
 
 import by.home.white.tasks.activities.ActivityForNoteBuild;
+
+import by.home.white.tasks.activities.CalendarActivity;
+import by.home.white.tasks.activities.MainActivity;
+import by.home.white.tasks.entities.PendInt;
 import by.home.white.tasks.retrofit.NetworkService;
 import by.home.white.tasks.reclrView.ReclrAdapter;
 import by.home.white.tasks.reclrView.ReclrItemClickListener;
@@ -47,16 +53,43 @@ public class MainActivityInside extends AppCompatActivity {
     private static final String CHANNEL_ID = "101";
     public boolean isEdit = false;
 
-    //private NoteViewModel mNoteViewModel;
+
 
     RecyclerView rv;
     ReclrAdapter adapter;
     String pendDate;
     List<Note> nts;
-    int user;
-    int editFor;
-    NotificationManager notificationManager;
 
+    int user;
+
+
+
+    int editFor;
+
+    long timediff;
+
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.calendar:
+                Intent calendarIntent = new Intent(MainActivityInside.this, CalendarActivity.class);
+                calendarIntent.putExtra("calendUser", user);
+                startActivity(calendarIntent);
+                return true;
+            default:
+                return false;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +97,10 @@ public class MainActivityInside extends AppCompatActivity {
         setContentView(R.layout.activity_main_inside);
 
         Intent mainintent = getIntent();
-            user = mainintent.getIntExtra("user",0);
+        user = mainintent.getIntExtra("user", 0);
+
+
+
 
 
         /*mNoteViewModel = ViewModelProviders.of(this).get(NoteViewModel.class);
@@ -93,17 +129,16 @@ public class MainActivityInside extends AppCompatActivity {
                 Note myNoteForIsDone = adapter.getNoteAtPosition(position);
                 myNoteForIsDone.setChecked(!myNoteForIsDone.isChecked());
 
-                        nts.set(position, myNoteForIsDone);
-                        adapter.notifyDataSetChanged();
-
+                nts.set(position, myNoteForIsDone);
+                adapter.notifyDataSetChanged();
 
 
                 //mNoteViewModel.update(myNoteForIsDone);
 
                 //{id}/{note}/{isChecked}/{priority}/{date}/{pendDate}/{userId}
                 NetworkService.getInstance().getJSONApiEditNote().editNote(myNoteForIsDone.getId(),
-                        myNoteForIsDone.getNote(),myNoteForIsDone.isChecked(),myNoteForIsDone.getPriority(),myNoteForIsDone.getDate().toString(),
-                        myNoteForIsDone.getPendingDate(),myNoteForIsDone.getUserId())
+                        myNoteForIsDone.getNote(), myNoteForIsDone.isChecked(), myNoteForIsDone.getPriority(), myNoteForIsDone.getDate().toString(),
+                        myNoteForIsDone.getPendingDate(), myNoteForIsDone.getUserId())
                         .enqueue(new Callback<Void>() {
                             @Override
                             public void onResponse(Call<Void> call, Response<Void> response) {
@@ -136,7 +171,6 @@ public class MainActivityInside extends AppCompatActivity {
         rv.addItemDecoration(dividerItemDecoration);
 
         rv.setAdapter(adapter);
-
 
 
         NetworkService.getInstance().getJSONApiGetNotes().getNotes(user)
@@ -175,8 +209,7 @@ public class MainActivityInside extends AppCompatActivity {
 
         if (requestCode == NEW_NOTE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
             isEdit = data.getBooleanExtra("isEdit", false);
-            if (isEdit)
-            {
+            if (isEdit) {
                 editFor = data.getIntExtra("EditFor", 0);
             }
 
@@ -198,29 +231,24 @@ public class MainActivityInside extends AppCompatActivity {
 
 
             //int id, String note, boolean isChecked, String date, String priority, String pendingDate, int userId
-            final Note note = new Note(editFor, onenote, false,  now, priority, pendDate, user);
+            final Note note = new Note(editFor, onenote, false, now, priority, pendDate, user);
 
 
-            if (isEdit)
-            {
+            if (isEdit) {
                 //mNoteViewModel.update(note);
 
 
-
-                        for (int i = 0; i < nts.size(); i++)
-                        {
-                            if (nts.get(i).getId() == editFor)
-                            {
-                                nts.set(i, note);
-                                adapter.notifyDataSetChanged();
-                            }
-                        }
-
+                for (int i = 0; i < nts.size(); i++) {
+                    if (nts.get(i).getId() == editFor) {
+                        nts.set(i, note);
+                        adapter.notifyDataSetChanged();
+                    }
+                }
 
 
                 NetworkService.getInstance().getJSONApiEditNote().editNote(editFor,
-                        note.getNote(),note.isChecked(),note.getPriority(),note.getDate(),
-                        note.getPendingDate(),user)
+                        note.getNote(), note.isChecked(), note.getPriority(), note.getDate(),
+                        note.getPendingDate(), user)
                         .enqueue(new Callback<Void>() {
                             @Override
                             public void onResponse(Call<Void> call, Response<Void> response) {
@@ -237,10 +265,26 @@ public class MainActivityInside extends AppCompatActivity {
                             }
                         });
 
-            }
-            else {
+            } else {
                 //mNoteViewModel.insert(note);
-               // {note}/{isChecked}/{priority}/{date}/{pendDate}/{userId}
+                SimpleDateFormat format = new SimpleDateFormat("yyMMddHHmmss");
+                Date pdate = null;
+                try {
+                    if (note.getPendingDate() != null) {
+                        pdate = format.parse(note.getPendingDate());
+
+                    } else {
+                        pdate = Calendar.getInstance().getTime();
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                long timeInMilliseconds = pdate.getTime();
+                long timeInMillisecondsNow = (long) new Date().getTime();
+                timediff = timeInMilliseconds - timeInMillisecondsNow;
+
+                // {note}/{isChecked}/{priority}/{date}/{pendDate}/{userId}
                 NetworkService.getInstance().getJSONApiInsertNote().insertNote(note.getNote(), note.isChecked(), note.getPriority(), note.getDate(),
                         note.getPendingDate(), note.getUserId())
                         .enqueue(new Callback<Integer>() {
@@ -252,6 +296,12 @@ public class MainActivityInside extends AppCompatActivity {
                                 toast.show();
 
                                 note.setId(response.body());
+                                if (timediff > 0) {
+
+
+                                    scheduleNotification(getNotification(note.getNote()), (int) timediff, note.getId());
+                                    Log.d("timinmillis", String.valueOf(timediff));
+                                }
 
                                 nts.add(note);
                                 adapter.notifyDataSetChanged();
@@ -265,29 +315,7 @@ public class MainActivityInside extends AppCompatActivity {
 
             }
 
-            SimpleDateFormat format = new SimpleDateFormat("yyMMddHHmmss");
-            Date pdate = null;
-            try {
-                if (note.getPendingDate() != null) {
-                    pdate = format.parse(note.getPendingDate());
 
-                }
-                else {
-                    pdate = Calendar.getInstance().getTime();
-                }
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-
-            long timeInMilliseconds = pdate.getTime();
-            long timeInMillisecondsNow = (long) new Date().getTime();
-            long timediff = timeInMilliseconds - timeInMillisecondsNow;
-            if (timediff > 0) {
-
-
-                scheduleNotification(getNotification(note.getNote()), (int) timediff, note.getId());
-                Log.d("timinmillis", String.valueOf(timediff));
-            }
 
 
 
@@ -317,13 +345,12 @@ public class MainActivityInside extends AppCompatActivity {
                         adapter.notifyDataSetChanged();
 
 
-
                         //mNoteViewModel.update(myNoteForIsDone);
 
                         //{id}/{note}/{isChecked}/{priority}/{date}/{pendDate}/{userId}
                         NetworkService.getInstance().getJSONApiEditNote().editNote(myNoteForIsDone.getId(),
-                                myNoteForIsDone.getNote(),myNoteForIsDone.isChecked(),myNoteForIsDone.getPriority(),myNoteForIsDone.getDate().toString(),
-                                myNoteForIsDone.getPendingDate(),myNoteForIsDone.getUserId())
+                                myNoteForIsDone.getNote(), myNoteForIsDone.isChecked(), myNoteForIsDone.getPriority(), myNoteForIsDone.getDate().toString(),
+                                myNoteForIsDone.getPendingDate(), myNoteForIsDone.getUserId())
                                 .enqueue(new Callback<Void>() {
                                     @Override
                                     public void onResponse(Call<Void> call, Response<Void> response) {
@@ -340,7 +367,6 @@ public class MainActivityInside extends AppCompatActivity {
                                         Log.d("cause:", t.getMessage());
                                     }
                                 });
-
 
 
                         return true;
@@ -354,15 +380,15 @@ public class MainActivityInside extends AppCompatActivity {
                                         Toast toast = Toast.makeText(getApplicationContext(),
                                                 "successful", Toast.LENGTH_SHORT);
                                         toast.show();
-                                        for ( int i = 0; i < nts.size(); i++)
-                                        {
-                                            if (nts.get(i).getId() == myNoteForDel.getId())
-                                            {
+                                        for (int i = 0; i < nts.size(); i++) {
+                                            if (nts.get(i).getId() == myNoteForDel.getId()) {
                                                 nts.remove(nts.get(i));
                                                 adapter.notifyDataSetChanged();
+
                                             }
                                         }
-                                        notificationManager.cancel(myNoteForDel.getId());
+                                        cancelNotification(getNotification(myNoteForDel.getNote()), myNoteForDel.getId());
+
 
                                     }
 
@@ -371,6 +397,9 @@ public class MainActivityInside extends AppCompatActivity {
                                         Log.d("cause:", t.getMessage());
                                     }
                                 });
+
+
+
 
                         return true;
                     case R.id.edit:
@@ -397,12 +426,47 @@ public class MainActivityInside extends AppCompatActivity {
         long futureInMillis = SystemClock.elapsedRealtime() + delay;
         AlarmManager alarmManager = (AlarmManager) getSystemService(this.ALARM_SERVICE);
         alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
+
+
+
+
+    }
+
+    // it doesn't work
+    private void cancelNotification(Notification notification, int id) {
+        /*getAllAsyncTask asyncTask = new getAllAsyncTask();
+        asyncTask.execute();
+        do
+        {
+            if (intentsIsloaded)
+            {
+                for (int i = 0; i < intents.size(); i++)
+                {
+                    if (intents.get(i).getNoteId() == id) {
+                        alarmManager.cancel(intents.get(i).getpInt());
+                        break;
+
+                    }
+                }
+                break;
+            }
+        }
+        while (!intentsIsloaded);*/
+        Intent notificationIntent = new Intent(this, NotificationPublisher.class);
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, 1);
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
+        PendingIntent pendIntent = PendingIntent.getBroadcast(getApplicationContext(), id, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) this.getSystemService(this.ALARM_SERVICE);
+        alarmManager.cancel(pendIntent);
+
+
+
     }
 
     private Notification getNotification(String content) {
 
 
-        notificationManager =
+        NotificationManager notificationManager =
                 (NotificationManager) getSystemService(this.NOTIFICATION_SERVICE);
 
         //if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -416,13 +480,12 @@ public class MainActivityInside extends AppCompatActivity {
         notificationManager.createNotificationChannel(channel);
 
 
-
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this, CHANNEL_ID)
                         .setSmallIcon(R.mipmap.ic_launcher)
                         .setContentTitle("task")
                         // 3 hours
-                        .setTimeoutAfter (10800000)
+                        .setTimeoutAfter(10800000)
                         .setContentText(content);
 
 
@@ -431,11 +494,13 @@ public class MainActivityInside extends AppCompatActivity {
 
     }
 
-
-
-
-
 }
+
+
+
+
+
+
 
 
 

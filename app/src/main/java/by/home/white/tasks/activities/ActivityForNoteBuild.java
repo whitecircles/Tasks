@@ -45,6 +45,7 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
     String pendDate;
     Calendar calendar;
     Note note;
+    TextView tv;
 
 
     private Button btnForPendDate;
@@ -56,6 +57,7 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
         setContentView(R.layout.activity_for_note_build);
 
         mEditNoteView = (EditText) findViewById(R.id.editText);
+        tv = findViewById(R.id.textViewForDateDisplay);
 
         Intent intent = getIntent();
         if (intent.hasExtra("noteForEdit"))
@@ -71,8 +73,8 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
 
 
         btnForPendDate = findViewById(R.id.buttonForDatePick);
-        TextView tvForPhoto = findViewById(R.id.textViewforPhotoTaken);
-        tvForPhoto.setText("");
+        //TextView tvForPhoto = findViewById(R.id.textViewforPhotoTaken);
+        //tvForPhoto.setText("");
 
 
 
@@ -100,7 +102,7 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
             }
 
             public void onNothingSelected(AdapterView<?> parent) {
-
+                item = "HIGH";
             }
         });
 
@@ -116,9 +118,7 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
         final FloatingActionButton button = findViewById(R.id.saveButton);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                if (item == null) {
-                    item = "SMALL";
-                }
+
 
                 Intent replyIntent = new Intent();
                 if (TextUtils.isEmpty(mEditNoteView.getText())) {
@@ -158,6 +158,9 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
 
 
                 calendar = Calendar.getInstance();
+
+
+
 
 
             }
@@ -200,6 +203,9 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
 
         SimpleDateFormat formatsimple = new SimpleDateFormat("yyMMddHHmmss");
         pendDate = formatsimple.format(calendar.getTime());
+        SimpleDateFormat simpleDate =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String simpledate = simpleDate.format(calendar.getTime());
+        tv.setText(simpledate);
     }
 
 
