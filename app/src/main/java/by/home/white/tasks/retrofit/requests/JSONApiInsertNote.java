@@ -12,9 +12,9 @@ import retrofit2.http.Path;
 
 public interface JSONApiInsertNote {
 
-    @GET("api/task/add/{note}/{isChecked}/{priority}/{date}/{pendDate}/{userId}")
+    @GET("api/task/add/{note}/{isChecked}/{priority}/{date}/{pendDate}/{userId}/{description}")
     Call<Integer> insertNote(@Path("note") String note, @Path("isChecked") boolean isChecked, @Path("priority") String priority, @Path("date") String date,
-                          @Path("pendDate") String pendDate, @Path("userId") int userId);
+    @Path("pendDate") String pendDate, @Path("userId") int userId, @Path("description") String description);
 }
 
 

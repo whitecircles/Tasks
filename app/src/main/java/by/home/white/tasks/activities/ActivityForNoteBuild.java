@@ -3,8 +3,6 @@ package by.home.white.tasks.activities;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
@@ -22,7 +20,6 @@ import android.widget.TimePicker;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 import by.home.white.tasks.fragments.DateFragment;
 import by.home.white.tasks.entities.Note;
@@ -32,16 +29,14 @@ import by.home.white.tasks.fragments.TimeFragment;
 public class ActivityForNoteBuild extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
 
     public static final String EXTRA_REPLY = "com.example.android.wordlistsql.REPLY";
+    public static final String EXTRA_REPLY_DESC = "com.example.android.wordlistsql.REPLY_DESC";
     public static final String EXTRA_REPLY_PRIORITY = "com.example.android.wordlistsql.REPLY_FOR_PRIORITY";
-    //public static final String EXTRA_REPLY_PHOTO = "com.example.android.wordlistsql.REPLY_FOR_PHOTO";
-    //static final int REQUEST_IMAGE_CAPTURE = 1;
     public boolean isEdit = false;
 
 
-    EditText mEditNoteView;
+    EditText editNoteView;
+    EditText editDesc;
     String item;
-    //Bitmap photo;
-    TextView tvForPhoto;
     String pendDate;
     Calendar calendar;
     Note note;
@@ -56,41 +51,31 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_for_note_build);
 
-        mEditNoteView = (EditText) findViewById(R.id.editText);
+        editNoteView = findViewById(R.id.editText);
+        editDesc = findViewById(R.id.editTextForDesc);
         tv = findViewById(R.id.textViewForDateDisplay);
 
         Intent intent = getIntent();
         if (intent.hasExtra("noteForEdit"))
         {
-            note = (Note) intent.getExtras().getParcelable("noteForEdit");
+            note = intent.getExtras().getParcelable("noteForEdit");
             isEdit = true;
-
-
         }
 
 
-
-
-
         btnForPendDate = findViewById(R.id.buttonForDatePick);
-        //TextView tvForPhoto = findViewById(R.id.textViewforPhotoTaken);
-        //tvForPhoto.setText("");
-
-
 
         //---------spinner
+        final Spinner spinner = findViewById(R.id.spinner);
 
-        final Spinner spinner = (Spinner) findViewById(R.id.spinner);
-
-        spinner.setAdapter(new ArrayAdapter<Note.Priority>(this, android.R.layout.simple_spinner_item, Note.Priority.values()));
+        spinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, Note.Priority.values()));
 
         if (note != null)
         {
             ArrayAdapter myAdap = (ArrayAdapter) spinner.getAdapter();
             int spinnerPosition = myAdap.getPosition(note.getPriority());
             spinner.setSelection(spinnerPosition);
-            mEditNoteView.setText(note.getNote());
-            //photo = note.getPhoto();
+            editNoteView.setText(note.getNote());
             pendDate = note.getPendingDate();
 
         }
@@ -106,14 +91,6 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
             }
         });
 
-        /*Button photoBtn = (Button) findViewById(R.id.buttonForPhoto);
-        photoBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dispatchTakePictureIntent();
-            }
-        }); */
-
 
         final FloatingActionButton button = findViewById(R.id.saveButton);
         button.setOnClickListener(new View.OnClickListener() {
@@ -121,15 +98,16 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
 
 
                 Intent replyIntent = new Intent();
-                if (TextUtils.isEmpty(mEditNoteView.getText())) {
+                if (TextUtils.isEmpty(editNoteView.getText())) {
                     setResult(RESULT_CANCELED, replyIntent);
                 } else {
-                    String word = mEditNoteView.getText().toString();
-                    replyIntent.putExtra(EXTRA_REPLY, word);
+                    String smallnote = editNoteView.getText().toString();
+                    replyIntent.putExtra(EXTRA_REPLY, smallnote);
+
+                    String desc = editDesc.getText().toString();
+                    replyIntent.putExtra(EXTRA_REPLY_DESC, desc);
 
                     replyIntent.putExtra(EXTRA_REPLY_PRIORITY, item);
-
-                    //replyIntent.putExtra(EXTRA_REPLY_PHOTO, photo);
 
                     replyIntent.putExtra("date", pendDate);
 
@@ -155,42 +133,11 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
                 datePicker.show(getSupportFragmentManager(), "date picker");
                 DialogFragment timePicker = new TimeFragment();
                 timePicker.show(getSupportFragmentManager(),"time picker");
-
-
                 calendar = Calendar.getInstance();
-
-
-
-
-
             }
         });
     }
 
-
-
-    /*private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            tvForPhoto = findViewById(R.id.textViewforPhotoTaken);
-
-
-            if(imageBitmap != null)
-            {
-                tvForPhoto.setText("Photo has been taken");
-            }
-            photo = imageBitmap;
-        }
-    }*/
 
 
     @Override

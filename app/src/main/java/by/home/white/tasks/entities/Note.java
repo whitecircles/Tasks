@@ -11,14 +11,9 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
 
-import by.home.white.tasks.converters.DateConverter;
-import by.home.white.tasks.converters.PriorityConverter;
 
 @Entity
 public class Note implements Parcelable {
-
-
-
 
     //----------------field
     @SerializedName("Id")
@@ -56,16 +51,22 @@ public class Note implements Parcelable {
     private int mUserId;
 
 
+    //----------------field
+    @SerializedName("description")
+    @Expose
+    private String mDescription;
+
+
     //----------------constructor
-    public Note(int id, String note, boolean isChecked, String date, String priority, String pendingDate, int userId) {
+    public Note(int id, String note, boolean isChecked, String date, String priority, String pendingDate, int userId, String description) {
         this.mId = id;
         this.mNote = note;
         this.mChecked = isChecked;
         this.mDate = date;
         this.mPriority = priority;
-        //this.mPhoto = photo;
         this.mPendingDate = pendingDate;
         this.mUserId = userId;
+        this.mDescription = description;
     }
 
     protected Note(Parcel in) {
@@ -74,9 +75,9 @@ public class Note implements Parcelable {
         mChecked = in.readByte() != 0;
         mDate = in.readString();
         mPendingDate = in.readString();
-        //mPhoto = in.readParcelable(Bitmap.class.getClassLoader());
         mPriority = in.readString();
         mUserId = in.readInt();
+        mDescription = in.readString();
 
 
     }
@@ -111,12 +112,11 @@ public class Note implements Parcelable {
         this.mChecked = mChecked;
     }
 
-    @NonNull
     public String getPriority() {
         return mPriority;
     }
 
-    public void setPriority(@NonNull String mPriority) {
+    public void setPriority(String mPriority) {
         this.mPriority = mPriority;
     }
 
@@ -144,25 +144,17 @@ public class Note implements Parcelable {
         this.mUserId = mUserId;
     }
 
-    @NonNull
     public int getId() {
         return mId;
     }
 
-    public void setId(@NonNull int mId) {
+    public void setId( int mId) {
         this.mId = mId;
     }
 
+    public String getDescription() { return mDescription; }
 
-
-    /*@NonNull
-    //public Bitmap getPhoto() {
-       return mPhoto;
-    }
-
-    //public void setPhoto(@NonNull Bitmap mPhoto) {
-        this.mPhoto = mPhoto;
-    }*/
+    public void setDescription(String mDescription) { this.mDescription = mDescription; }
 
 
     @Override
@@ -177,9 +169,9 @@ public class Note implements Parcelable {
         dest.writeInt(mChecked ? 1 : 0);
         dest.writeString(mDate);
         dest.writeString(mPendingDate);
-        //dest.writeParcelable(mPhoto, flags);
         dest.writeString(mPriority);
         dest.writeInt(mUserId);
+        dest.writeString(mDescription);
     }
 
     public enum Priority {

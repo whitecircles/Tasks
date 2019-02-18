@@ -66,10 +66,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-
-
-
-        //---------
         NetworkService.getInstance().getJSONApiGetUsers().getUsers()
                 .enqueue(new Callback<List<User>>() {
                              @Override

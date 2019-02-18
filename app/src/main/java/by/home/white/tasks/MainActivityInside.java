@@ -1,13 +1,11 @@
 package by.home.white.tasks;
 
-import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Parcelable;
 import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
@@ -27,7 +25,6 @@ import android.widget.Toast;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -35,8 +32,6 @@ import java.util.List;
 import by.home.white.tasks.activities.ActivityForNoteBuild;
 
 import by.home.white.tasks.activities.CalendarActivity;
-import by.home.white.tasks.activities.MainActivity;
-import by.home.white.tasks.entities.PendInt;
 import by.home.white.tasks.retrofit.NetworkService;
 import by.home.white.tasks.reclrView.ReclrAdapter;
 import by.home.white.tasks.reclrView.ReclrItemClickListener;
@@ -61,11 +56,7 @@ public class MainActivityInside extends AppCompatActivity {
     List<Note> nts;
 
     int user;
-
-
-
     int editFor;
-
     long timediff;
 
 
@@ -99,26 +90,6 @@ public class MainActivityInside extends AppCompatActivity {
         Intent mainintent = getIntent();
         user = mainintent.getIntExtra("user", 0);
 
-
-
-
-
-        /*mNoteViewModel = ViewModelProviders.of(this).get(NoteViewModel.class);
-
-        mNoteViewModel.getAllNotes().observe(this, new Observer<List<Note>>() {
-            @Override
-            public void onChanged(@Nullable final List<Note> notes) {
-                // Update the cached copy of the words in the adapter.
-                adapter.setNotes(notes);
-
-                //nts = notes;
-            }
-        });
-
-        getAllAsyncTask task = new getAllAsyncTask();
-        task.execute(); */
-
-
         rv = findViewById(R.id.reclr);
         adapter = new ReclrAdapter(this);
         RecyclerView.LayoutManager lm = new LinearLayoutManager(this);
@@ -132,13 +103,9 @@ public class MainActivityInside extends AppCompatActivity {
                 nts.set(position, myNoteForIsDone);
                 adapter.notifyDataSetChanged();
 
-
-                //mNoteViewModel.update(myNoteForIsDone);
-
-                //{id}/{note}/{isChecked}/{priority}/{date}/{pendDate}/{userId}
                 NetworkService.getInstance().getJSONApiEditNote().editNote(myNoteForIsDone.getId(),
                         myNoteForIsDone.getNote(), myNoteForIsDone.isChecked(), myNoteForIsDone.getPriority(), myNoteForIsDone.getDate().toString(),
-                        myNoteForIsDone.getPendingDate(), myNoteForIsDone.getUserId())
+                        myNoteForIsDone.getPendingDate(), myNoteForIsDone.getUserId(), myNoteForIsDone.getDescription())
                         .enqueue(new Callback<Void>() {
                             @Override
                             public void onResponse(Call<Void> call, Response<Void> response) {
@@ -167,9 +134,7 @@ public class MainActivityInside extends AppCompatActivity {
         }));
 
         RecyclerView.ItemDecoration dividerItemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
-        //((DividerItemDecoration) dividerItemDecoration).setDrawable(ContextCompat.getDrawable(this, R.drawable.divider));
         rv.addItemDecoration(dividerItemDecoration);
-
         rv.setAdapter(adapter);
 
 
@@ -191,7 +156,7 @@ public class MainActivityInside extends AppCompatActivity {
                 });
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -217,28 +182,16 @@ public class MainActivityInside extends AppCompatActivity {
             SimpleDateFormat formatsimple2 = new SimpleDateFormat("yyMMddHHmmss");
             String now = formatsimple2.format(Calendar.getInstance().getTime());
             String priority = data.getStringExtra(ActivityForNoteBuild.EXTRA_REPLY_PRIORITY);
-            //Bitmap btm = data.getParcelableExtra(ActivityForNoteBuild.EXTRA_REPLY_PHOTO);
             pendDate = data.getStringExtra("date");
             if (pendDate == null)
                 pendDate = formatsimple2.format(Calendar.getInstance().getTime());
-            /*if (btm == null) {
-                Bitmap photo = BitmapFactory.decodeResource(this.getResources(),
-                        R.drawable.nophoto);
-                btm = photo;
-            }*/
 
             String onenote = data.getStringExtra(ActivityForNoteBuild.EXTRA_REPLY);
-
-
-            //int id, String note, boolean isChecked, String date, String priority, String pendingDate, int userId
-            final Note note = new Note(editFor, onenote, false, now, priority, pendDate, user);
-
+            String desc = data.getStringExtra(ActivityForNoteBuild.EXTRA_REPLY_DESC);
+            final Note note = new Note(editFor, onenote, false, now, priority, pendDate, user, desc);
 
             if (isEdit) {
-                //mNoteViewModel.update(note);
-
-
-                for (int i = 0; i < nts.size(); i++) {
+                 for (int i = 0; i < nts.size(); i++) {
                     if (nts.get(i).getId() == editFor) {
                         nts.set(i, note);
                         adapter.notifyDataSetChanged();
@@ -248,7 +201,7 @@ public class MainActivityInside extends AppCompatActivity {
 
                 NetworkService.getInstance().getJSONApiEditNote().editNote(editFor,
                         note.getNote(), note.isChecked(), note.getPriority(), note.getDate(),
-                        note.getPendingDate(), user)
+                        note.getPendingDate(), user, note.getDescription())
                         .enqueue(new Callback<Void>() {
                             @Override
                             public void onResponse(Call<Void> call, Response<Void> response) {
@@ -266,7 +219,7 @@ public class MainActivityInside extends AppCompatActivity {
                         });
 
             } else {
-                //mNoteViewModel.insert(note);
+
                 SimpleDateFormat format = new SimpleDateFormat("yyMMddHHmmss");
                 Date pdate = null;
                 try {
@@ -281,12 +234,12 @@ public class MainActivityInside extends AppCompatActivity {
                 }
 
                 long timeInMilliseconds = pdate.getTime();
-                long timeInMillisecondsNow = (long) new Date().getTime();
+                long timeInMillisecondsNow = new Date().getTime();
                 timediff = timeInMilliseconds - timeInMillisecondsNow;
 
-                // {note}/{isChecked}/{priority}/{date}/{pendDate}/{userId}
+
                 NetworkService.getInstance().getJSONApiInsertNote().insertNote(note.getNote(), note.isChecked(), note.getPriority(), note.getDate(),
-                        note.getPendingDate(), note.getUserId())
+                        note.getPendingDate(), note.getUserId(), note.getDescription())
                         .enqueue(new Callback<Integer>() {
                             @Override
                             public void onResponse(Call<Integer> call, Response<Integer> response) {
@@ -330,14 +283,9 @@ public class MainActivityInside extends AppCompatActivity {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
-                    /*case R.id.showPhoto:
-                        Intent imgIntent = new Intent(MainActivityInside.this, GalleryActivity.class);
-                        Note myNote = adapter.getNoteAtPosition(position);
-                        imgIntent.putExtra("photo", myNote.getPhoto());
-                        startActivity(imgIntent);
-                        return true;*/
+
                     case R.id.setDone:
-                        //mNoteViewModel.update(myNoteForIsDone);
+
                         final Note myNoteForIsDone = adapter.getNoteAtPosition(position);
                         myNoteForIsDone.setChecked(!myNoteForIsDone.isChecked());
 
@@ -345,12 +293,9 @@ public class MainActivityInside extends AppCompatActivity {
                         adapter.notifyDataSetChanged();
 
 
-                        //mNoteViewModel.update(myNoteForIsDone);
-
-                        //{id}/{note}/{isChecked}/{priority}/{date}/{pendDate}/{userId}
                         NetworkService.getInstance().getJSONApiEditNote().editNote(myNoteForIsDone.getId(),
                                 myNoteForIsDone.getNote(), myNoteForIsDone.isChecked(), myNoteForIsDone.getPriority(), myNoteForIsDone.getDate().toString(),
-                                myNoteForIsDone.getPendingDate(), myNoteForIsDone.getUserId())
+                                myNoteForIsDone.getPendingDate(), myNoteForIsDone.getUserId(), myNoteForIsDone.getDescription())
                                 .enqueue(new Callback<Void>() {
                                     @Override
                                     public void onResponse(Call<Void> call, Response<Void> response) {
@@ -372,8 +317,7 @@ public class MainActivityInside extends AppCompatActivity {
                         return true;
                     case R.id.delete:
                         final Note myNoteForDel = adapter.getNoteAtPosition(position);
-                        //mNoteViewModel.delete(myNoteForDel);
-                        NetworkService.getInstance().getJSONApiDeleteNote().deleteNote(myNoteForDel.getId())
+                          NetworkService.getInstance().getJSONApiDeleteNote().deleteNote(myNoteForDel.getId())
                                 .enqueue(new Callback<Void>() {
                                     @Override
                                     public void onResponse(Call<Void> call, Response<Void> response) {
@@ -432,34 +376,15 @@ public class MainActivityInside extends AppCompatActivity {
 
     }
 
-    // it doesn't work
-    private void cancelNotification(Notification notification, int id) {
-        /*getAllAsyncTask asyncTask = new getAllAsyncTask();
-        asyncTask.execute();
-        do
-        {
-            if (intentsIsloaded)
-            {
-                for (int i = 0; i < intents.size(); i++)
-                {
-                    if (intents.get(i).getNoteId() == id) {
-                        alarmManager.cancel(intents.get(i).getpInt());
-                        break;
 
-                    }
-                }
-                break;
-            }
-        }
-        while (!intentsIsloaded);*/
+    private void cancelNotification(Notification notification, int id) {
+
         Intent notificationIntent = new Intent(this, NotificationPublisher.class);
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, 1);
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
         PendingIntent pendIntent = PendingIntent.getBroadcast(getApplicationContext(), id, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) this.getSystemService(this.ALARM_SERVICE);
         alarmManager.cancel(pendIntent);
-
-
 
     }
 
@@ -474,7 +399,6 @@ public class MainActivityInside extends AppCompatActivity {
                 NotificationManager.IMPORTANCE_HIGH);
         channel.setDescription("My channel description");
         channel.enableLights(true);
-        //channel.setLightColor(Color.RED);
         channel.enableVibration(false);
 
         notificationManager.createNotificationChannel(channel);
@@ -490,7 +414,6 @@ public class MainActivityInside extends AppCompatActivity {
 
 
         return builder.build();
-        //---------------------
 
     }
 

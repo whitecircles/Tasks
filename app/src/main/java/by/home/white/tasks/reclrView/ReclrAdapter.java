@@ -25,7 +25,7 @@ public class ReclrAdapter extends RecyclerView.Adapter<ReclrAdapter.ViewHolder> 
         private final TextView noteItemView;
         private final CheckBox noteCheckBox;
         private final TextView noteDateView;
-        //private final ImageView noteImageView;
+        private  final TextView noteDescView;
         private final TextView noteDateToView;
 
 
@@ -34,17 +34,17 @@ public class ReclrAdapter extends RecyclerView.Adapter<ReclrAdapter.ViewHolder> 
             noteItemView = itemView.findViewById(R.id.textView);
             noteCheckBox = itemView.findViewById(R.id.checkBox);
             noteDateView = itemView.findViewById(R.id.textViewForDate);
-            //noteImageView = itemView.findViewById(R.id.imageView);
             noteDateToView = itemView.findViewById(R.id.textViewForDateTo);
+            noteDescView = itemView.findViewById(R.id.textViewForDescription);
 
 
         }
     }
 
     private final LayoutInflater mInflater;
-    private List<Note> mNotes; // Cached copy of words
-    private Context mContext;// Cached copy of words
-    //private ArrayList<Bitmap> mPhotos;
+    private List<Note> mNotes;
+
+
 
     public ReclrAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
@@ -79,6 +79,8 @@ public class ReclrAdapter extends RecyclerView.Adapter<ReclrAdapter.ViewHolder> 
             else {
                 holder.noteItemView.setPaintFlags(0);
             }
+            holder.noteDescView.setText(current.getDescription());
+
             holder.noteCheckBox.setChecked(current.isChecked());
             SimpleDateFormat format = new SimpleDateFormat("yyMMddHHmmss");
 

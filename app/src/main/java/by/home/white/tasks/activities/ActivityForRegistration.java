@@ -34,7 +34,7 @@ public class ActivityForRegistration extends AppCompatActivity {
         final EditText editForPass = findViewById(R.id.editTextForPass2);
 
 
-        final Button btnToReg = (Button) findViewById(R.id.btnForRegistr2);
+        final Button btnToReg = findViewById(R.id.btnForRegistr2);
         btnToReg.setEnabled(false);
         NetworkService.getInstance().getJSONApiGetUsers().getUsers()
                 .enqueue(new Callback<List<User>>() {

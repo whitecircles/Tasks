@@ -20,7 +20,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.ActivityForNoteBuild" />
-        <activity android:name=".activities.GalleryActivity" />
         <activity android:name=".MainActivityInside" />
 
         <receiver android:name=".NotificationPublisher" />
