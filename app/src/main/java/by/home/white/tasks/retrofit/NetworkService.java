@@ -52,6 +52,8 @@ public class NetworkService {
 
     public JSONApiInsertUser getJSONApiInsertUser() { return mRetrofit.create(JSONApiInsertUser.class); }
 
+    public JSONApiInsertPhoto getJSONApiInsertPhoto() { return mRetrofit.create(JSONApiInsertPhoto.class); }
+
 
 }
 

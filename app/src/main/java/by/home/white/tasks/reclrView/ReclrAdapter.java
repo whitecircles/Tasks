@@ -4,7 +4,6 @@ package by.home.white.tasks.reclrView;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import androidx.recyclerview.widget.RecyclerView;
 import by.home.white.tasks.R;
 import by.home.white.tasks.entities.Note;
 

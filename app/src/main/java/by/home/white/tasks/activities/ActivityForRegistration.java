@@ -1,7 +1,7 @@
 package by.home.white.tasks.activities;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import androidx.appcompat.app.AppCompatActivity;
 import by.home.white.tasks.R;
 import by.home.white.tasks.User;
 import by.home.white.tasks.retrofit.NetworkService;

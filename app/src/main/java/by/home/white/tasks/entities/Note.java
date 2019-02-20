@@ -1,10 +1,9 @@
 package by.home.white.tasks.entities;
 
 
-import android.arch.persistence.room.Entity;
+
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -12,7 +11,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.Date;
 
 
-@Entity
+
 public class Note implements Parcelable {
 
     //----------------field

@@ -3,7 +3,6 @@ package by.home.white.tasks.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +13,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import androidx.appcompat.app.AppCompatActivity;
 import by.home.white.tasks.MainActivityInside;
 import by.home.white.tasks.retrofit.NetworkService;
 import by.home.white.tasks.R;

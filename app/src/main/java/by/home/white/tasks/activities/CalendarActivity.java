@@ -1,10 +1,7 @@
 package by.home.white.tasks.activities;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -22,6 +19,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import androidx.appcompat.app.AppCompatActivity;
 import by.home.white.tasks.MainActivityInside;
 import by.home.white.tasks.R;
 import by.home.white.tasks.entities.Note;
