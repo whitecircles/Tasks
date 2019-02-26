@@ -24,7 +24,7 @@ public class ReclrAdapter extends RecyclerView.Adapter<ReclrAdapter.ViewHolder> 
     class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView noteItemView;
         private final CheckBox noteCheckBox;
-        private final TextView noteDateView;
+        //private final TextView noteDateView;
         private  final TextView noteDescView;
         private final TextView noteDateToView;
 
@@ -33,7 +33,7 @@ public class ReclrAdapter extends RecyclerView.Adapter<ReclrAdapter.ViewHolder> 
             super(itemView);
             noteItemView = itemView.findViewById(R.id.textView);
             noteCheckBox = itemView.findViewById(R.id.checkBox);
-            noteDateView = itemView.findViewById(R.id.textViewForDate);
+            //noteDateView = itemView.findViewById(R.id.textViewForDate);
             noteDateToView = itemView.findViewById(R.id.textViewForDateTo);
             noteDescView = itemView.findViewById(R.id.textViewForDescription);
 
@@ -88,7 +88,7 @@ public class ReclrAdapter extends RecyclerView.Adapter<ReclrAdapter.ViewHolder> 
                 Date date = format.parse(current.getDate());
                 SimpleDateFormat simpleDate =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 String simpledate = simpleDate.format(date);
-                holder.noteDateView.setText(simpledate);
+                //holder.noteDateView.setText(simpledate);
             } catch (ParseException e) {
                 e.printStackTrace();
             }

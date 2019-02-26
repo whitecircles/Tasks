@@ -88,7 +88,7 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
 
 
         btnForPendDate = findViewById(R.id.buttonForDatePick);
-        btnForPhotoTaken = findViewById(R.id.buttonForPhoto);
+        //btnForPhotoTaken = findViewById(R.id.buttonForPhoto);
 
         //---------spinner
         final Spinner spinner = findViewById(R.id.spinner);
@@ -160,14 +160,14 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
                 calendar = Calendar.getInstance();
             }
         });
-    }
+
 
         /*btnForPhotoTaken.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dispatchTakePictureIntent();
             }
-        });
+        });*/
 
 
     }
@@ -200,8 +200,8 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
 
+            uploadBinary(this);
 
-            //uploadBinary(this);
 
 
         }
@@ -212,16 +212,18 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
             // starting from 3.1+, you can also use content:// URI string instead of absolute file
             String filePath = photoURI.toString();
             String uploadId =
-                    new BinaryUploadRequest(context, "https://mveronicatest2.azurewebsites.net/api/photo/add")
+                    new BinaryUploadRequest(context, "https://mveronicatest2.azurewebsites.net/api/photo/add/")
                             .setFileToUpload(filePath)
-                            .addHeader("id", String.valueOf(119))
+                            .addHeader("file-name", new File(filePath).getName())
                             .setNotificationConfig(new UploadNotificationConfig())
                             .setMaxRetries(2)
                             .startUpload();
         } catch (Exception exc) {
-            Log.e("AndroidUploadService", exc.getMessage(), exc);
+            Log.d("AndroidUploadService", exc.getMessage(), exc);
         }
     }
+
+
 
     private File createImageFile() throws IOException {
         // Create an image file name
@@ -231,12 +233,12 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
         File image = File.createTempFile(
                 imageFileName,
                 ".jpg",
-                storageDir
+                storageDir);
 
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.getAbsolutePath();
         return image;
-    }*/
+    }
 
 
 
