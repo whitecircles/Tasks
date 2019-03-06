@@ -100,6 +100,7 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
             int spinnerPosition = myAdap.getPosition(note.getPriority());
             spinner.setSelection(spinnerPosition);
             editNoteView.setText(note.getNote());
+            editDesc.setText(note.getDescription());
             pendDate = note.getPendingDate();
 
         }
@@ -200,21 +201,21 @@ public class ActivityForNoteBuild extends AppCompatActivity implements DatePicke
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
 
-            uploadBinary(this);
+            uploadMultipart(this);
 
 
 
         }
     }
 
-    public void uploadBinary(final Context context) {
+
+
+    public void uploadMultipart(final Context context) {
         try {
-            // starting from 3.1+, you can also use content:// URI string instead of absolute file
-            String filePath = photoURI.toString();
             String uploadId =
-                    new BinaryUploadRequest(context, "https://mveronicatest2.azurewebsites.net/api/photo/add/")
-                            .setFileToUpload(filePath)
-                            .addHeader("file-name", new File(filePath).getName())
+                    new MultipartUploadRequest(context, "https://mveronicatest2.azurewebsites.net")
+                            // starting from 3.1+, you can also use content:// URI string instead of absolute file
+                            .addFileToUpload(photoURI.toString(), "img")
                             .setNotificationConfig(new UploadNotificationConfig())
                             .setMaxRetries(2)
                             .startUpload();
